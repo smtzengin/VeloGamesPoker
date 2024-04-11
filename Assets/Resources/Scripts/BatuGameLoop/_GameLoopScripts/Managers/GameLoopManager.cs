@@ -4,10 +4,10 @@ public class GameLoopManager : MonoBehaviour
 {
     public static GameLoopManager Instance { get; private set; }
 
-    [SerializeField] private GameObject[] _players; 
-    private int currentPlayerIndex = 0;
-    private int actionCount = 0;
-    private GameRound _currentRound = GameRound.PreFlop;
+    [SerializeField] private GameObject[] _players;
+    private int _currentPlayerIndex = 0;
+    private int _actionCount = 0;
+    [SerializeField] private GameRound _currentRound;
 
     private void Awake()
     {
@@ -24,27 +24,31 @@ public class GameLoopManager : MonoBehaviour
 
     private void Start()
     {
-        LightManager.Instance.MoveTurnIndicator(_players[currentPlayerIndex].transform.position);
+        _currentRound = GameRound.PreFlop;
+        LightManager.Instance.MoveTurnIndicator(_players[_currentPlayerIndex].transform.position);
     }
 
     public void OnPlayerAction()
     {
-        Debug.Log($"Player {currentPlayerIndex + 1} took an action in {_currentRound} round.");
+        Debug.Log($"Player {_currentPlayerIndex + 1} aksiyon aldi {_currentRound} roundunda.");
 
-        currentPlayerIndex = (currentPlayerIndex + 1) % _players.Length;
-        actionCount++;
+        _currentPlayerIndex = (_currentPlayerIndex + 1) % _players.Length;
+        _actionCount++;
 
-        if (actionCount == _players.Length)
+        if (_actionCount == _players.Length)
         {
             UpdateRound();
         }
 
-        LightManager.Instance.MoveTurnIndicator(_players[currentPlayerIndex].transform.position);
+        LightManager.Instance.MoveTurnIndicator(_players[_currentPlayerIndex].transform.position);
 
-        Debug.Log($"It's now Player {currentPlayerIndex + 1}'s turn in {_currentRound} round.");
+        Debug.Log($"Simdi Player {_currentPlayerIndex + 1}' in turu {_currentRound} roundunda.");
     }
-
-
+    public GameObject[] GetPlayers()
+    {
+       Debug.Log("player return");
+        return _players;
+    }
     private void UpdateRound()
     {
         switch (_currentRound)
@@ -62,10 +66,10 @@ public class GameLoopManager : MonoBehaviour
                 _currentRound = GameRound.Showdown;
                 break;
             case GameRound.Showdown:
-                Debug.Log($"Game Over");
+                Debug.Log($"Turlar bitti/ Oyun bitti");
                 break;
         }
-        actionCount = 0;
-        Debug.Log($"Round updated to {_currentRound}");
+        _actionCount = 0;
+        Debug.Log($"Round suan {_currentRound}");
     }
 }
