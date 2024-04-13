@@ -55,12 +55,15 @@ public class GameLoopManager : MonoBehaviour
         {
             case GameRound.PreFlop:
                 _currentRound = GameRound.Flop;
+                Table.Instance.AckardToTable();
                 break;
             case GameRound.Flop:
                 _currentRound = GameRound.Turn;
+                Table.Instance.AckardToTable();
                 break;
             case GameRound.Turn:
                 _currentRound = GameRound.River;
+                Table.Instance.AckardToTable();
                 break;
             case GameRound.River:
                 _currentRound = GameRound.Showdown;

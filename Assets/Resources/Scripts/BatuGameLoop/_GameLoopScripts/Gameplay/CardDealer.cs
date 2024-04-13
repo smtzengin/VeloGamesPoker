@@ -36,16 +36,28 @@ public class CardDealer : MonoBehaviour
             _remainingCards[i] = _remainingCards[randomIndex];
             _remainingCards[randomIndex] = temp;
         }
-                Debug.Log("shuffle");
+        Debug.Log("shuffle");
     }
 
+    public CardSO[] DealCardsToTable(int count)
+    {
+        Debug.Log("deal table");
+        CardSO[] cardsToTable = new CardSO[count];
+        for (int i = 0; i < count; i++)
+        {
+            int randomIndex = Random.Range(0, _remainingCards.Count);
+            cardsToTable[i] = _remainingCards[randomIndex];
+            _remainingCards.RemoveAt(randomIndex);
+        }
+        return cardsToTable;
+    }
     public void DealCardsToPlayers()
     {
         GameObject[] players = GameLoopManager.Instance.GetPlayers();
-                Debug.Log("getplayers");
+        Debug.Log("getplayers");
 
         int playerCount = players.Length;
-        Debug.Log(" count" +  playerCount  + players.Length + " length");
+        Debug.Log(" count" + playerCount + players.Length + " length");
 
         for (int i = 0; i < playerCount; i++)
         {
@@ -65,4 +77,6 @@ public class CardDealer : MonoBehaviour
             }
         }
     }
+
+
 }
