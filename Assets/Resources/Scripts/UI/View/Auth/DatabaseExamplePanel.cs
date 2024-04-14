@@ -25,7 +25,7 @@ public class DatabaseExamplePanel : MonoBehaviour
 
     [SerializeField] private Button logoutButton;
 
-    private FirebaseManager _firebaseManager;
+    [SerializeField]private FirebaseManager _firebaseManager;
     private LoadingPanel _loadingPanel;
 
     public event Action<string, int> OnDataChanged;
