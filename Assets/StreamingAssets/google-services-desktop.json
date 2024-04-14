@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "690909461549",
+    "firebase_url": "https://velogamespoker-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "velogamespoker",
+    "storage_bucket": "velogamespoker.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:690909461549:android:ee9425eeeb0d13bdb78ca4",
+        "android_client_info": {
+          "package_name": "com.DefaultCompany.VeloPoker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7AqjU2H54hTXOzb0RwVM6_1eOzMKSO1E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
