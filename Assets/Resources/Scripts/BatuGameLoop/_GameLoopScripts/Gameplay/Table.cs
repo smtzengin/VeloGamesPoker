@@ -19,13 +19,17 @@ public class Table : MonoBehaviour
         }
     }
 
-    public void AckardToTable()
+    public void AckardToTable(int cardCount)
     {
-        CardSO[] cardsToTable = CardDealer.Instance.DealCardsToTable(1);
+        CardSO[] cardsToTable = CardDealer.Instance.DealCardsToTable(cardCount);
         foreach (var card in cardsToTable)
         {
             _tableCards.Add(card);
             Debug.Log($"Masaya acilan kart: {card.Sign} - {card.Value}");
         }
+    }
+    public List<CardSO> GetCards()
+    {
+        return _tableCards;
     }
 }
