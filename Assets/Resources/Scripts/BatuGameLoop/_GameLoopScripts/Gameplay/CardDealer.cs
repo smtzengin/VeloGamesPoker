@@ -53,11 +53,11 @@ public class CardDealer : MonoBehaviour
     }
     public void DealCardsToPlayers()
     {
-        GameObject[] players = GameLoopManager.Instance.GetPlayers();
+        List<Player> players = GameLoopManager.Instance.GetPlayers();
         Debug.Log("getplayers");
 
-        int playerCount = players.Length;
-        Debug.Log(" count" + playerCount + players.Length + " length");
+        int playerCount = players.Count;
+        Debug.Log(" count" + playerCount + players.Count + " length");
 
         for (int i = 0; i < playerCount; i++)
         {
@@ -68,13 +68,13 @@ public class CardDealer : MonoBehaviour
                 playerCards.Add(_remainingCards[randomIndex]);
                 _remainingCards.RemoveAt(randomIndex);
             }
-            players[i].GetComponent<Player>().ReceiveCards(playerCards.ToArray());
+            players[i].ReceiveCards(playerCards.ToArray());
 
-            Debug.Log($"Player {i + 1} 'in kartlari:");
-            foreach (var card in playerCards)
-            {
-                Debug.Log($"Card: {card.Sign} - {card.Value}");
-            }
+            //Debug.Log($"Player {i + 1} 'in kartlari:");
+            //foreach (var card in playerCards)
+            //{
+            //    Debug.Log($"Card: {card.Sign} - {card.Value}");
+            //}
         }
     }
 

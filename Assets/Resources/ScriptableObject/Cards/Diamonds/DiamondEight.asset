@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: DiamondEight
   m_EditorClassIdentifier: 
   Sign: 1
-  Value: 2
+  Value: 8
   Id: 7
