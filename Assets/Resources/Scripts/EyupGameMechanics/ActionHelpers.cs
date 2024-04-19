@@ -20,9 +20,7 @@ public class ActionHelpers : MonoBehaviour
         _raise.onClick.AddListener(delegate { Raise(_player, _raiseAmount); });
         _increaseBid.onClick.AddListener(delegate { IncreaseBid(); });
         _decreaseBid.onClick.AddListener(delegate { DecreaseBid(); });
-
-
-        //All-in-One için player'ýn chiplerini çekmek gerekiyor!
+        _allInOne.onClick.AddListener(delegate { AllIn(_player); });
 
     }
 
@@ -53,24 +51,38 @@ public class ActionHelpers : MonoBehaviour
     public void Raise(Player player, int amount)
     {
         int newBid = 0;
-        if (player.GetCurrentBid() <= GameLoopManager.Instance.MinBid) //Player'ýn son bahsi bir önceki oyuncudan düþükse
+
+        if (player.GetChips() <= 0 || amount <= 0) // Eðer oyuncunun chip'i 0 veya daha azsa raise yapamaz
+        {
+            Debug.Log("Not enough chips to raise.");
+            return;
+        }
+
+        if (player.GetChips() < amount) // Eðer oyuncunun elindeki chip miktarý raise miktarýndan azsa, tüm chipleri ortaya koy
+        {
+            amount = player.GetChips();
+        }
+
+        if (player.GetCurrentBid() <= GameLoopManager.Instance.MinBid) // Player'ýn son bahsi bir önceki oyuncudan düþükse
+        {
             newBid = (GameLoopManager.Instance.MinBid - player.GetCurrentBid()) + amount;
+        }
 
         Debug.Log("MinBid: " + GameLoopManager.Instance.MinBid + " PlayerBid: " + player.GetCurrentBid());
         Debug.Log("NewBid: " + newBid);
         Debug.Log("CurrentBid: " + GameLoopManager.Instance.CurrentBid);
-        player.AddBid(newBid); //Player'ýn son bahsini yükselt
-
-
+        player.AddBid(newBid); // Player'ýn son bahsini yükselt
 
         GameLoopManager.Instance.CurrentBid += newBid;
         GameLoopManager.Instance.MinBid += amount;
         GameLoopManager.Instance.OnPlayerAction();
     }
+
     public void AllIn(Player player)
     {
-        //eðer oyuncunun yeteri kadar chip'i varsa:
-        //player.getchip
+        int chips = player.GetChips();
+        player.AddBid(chips);
+        GameLoopManager.Instance.CurrentBid += chips;
         GameLoopManager.Instance.OnPlayerAction();
     }
     public void IncreaseBid()

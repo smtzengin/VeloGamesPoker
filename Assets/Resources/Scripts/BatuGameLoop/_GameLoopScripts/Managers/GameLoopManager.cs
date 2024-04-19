@@ -12,6 +12,7 @@ public class GameLoopManager : MonoBehaviour
     [SerializeField] Player[] _allPlayer;
     [SerializeField] List<Player> _currentPlayers;
 
+    private int _currentStartingPlayerIndex = 0;
     private int _currentPlayerIndex = 0;
     private int _actionCount = 0;
     private int _loopCount = 0;
@@ -45,8 +46,38 @@ public class GameLoopManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        // Rastgele bir oyuncu seç
+        int randomIndex = Random.Range(0, _allPlayer.Length);
+        Player startingPlayer = _allPlayer[randomIndex];
+
+        // Seçilen oyuncuyu _currentPlayers listesine ekle
+        _currentPlayers = new List<Player>();
+        _currentPlayers.Add(startingPlayer);
+
+        Debug.Log("Seçilen oyuncu: " + startingPlayer.name);
+
+
         SetupLine();
     }
+
+    public void SetupLine()
+    {
+        // Önceki oyunda tutulan oyuncudan bir sonraki oyuncunun baþlamasý için indeksi güncelle
+        _currentStartingPlayerIndex = (_currentStartingPlayerIndex + 1) % _currentPlayers.Count;
+
+        // Güncellenmiþ indeksten baþlayarak oyuncu sýrasýný oluþtur
+        List<Player> newPlayerOrder = new List<Player>();
+
+        for (int i = 0; i < _currentPlayers.Count; i++)
+        {
+            int playerIndex = (i + _currentStartingPlayerIndex) % _currentPlayers.Count;
+            newPlayerOrder.Add(_currentPlayers[playerIndex]);
+        }
+
+        _currentPlayers = newPlayerOrder;
+    }
+
 
     private void Start()
     {
@@ -119,15 +150,7 @@ public class GameLoopManager : MonoBehaviour
         Debug.Log($"Round suan {_currentRound}");
     }
 
-    public void SetupLine()
-    {
-        int firstToStart = Random.Range(0, _allPlayer.Length);
-        _currentPlayers = new List<Player>();
-
-        for (int i = 0; i < _allPlayer.Length; i++)
-            _currentPlayers.Add(_allPlayer[(firstToStart + i) % _allPlayer.Length]);
-
-    }
+    
     public Player GetCurrentPlayer()
     {
         return _currentPlayers[_currentPlayerIndex];
