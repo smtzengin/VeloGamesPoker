@@ -1,9 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
-using UnityEngine.XR;
-using System.Numerics;
-using Unity.VisualScripting;
 
 public class GameLoopManager : MonoBehaviour
 {
@@ -14,12 +10,12 @@ public class GameLoopManager : MonoBehaviour
 
     private int _currentPlayerIndex = 0;
     private int _actionCount = 0;
-    private int _loopCount = 0;
 
     [SerializeField] private GameRound _currentRound;
 
     [SerializeField] private int _minBid = 20;
     [SerializeField] private int _currentBid;
+
     public int MinBid
     {
         get { return _minBid; }
@@ -50,10 +46,9 @@ public class GameLoopManager : MonoBehaviour
 
     private void Start()
     {
-        _currentRound = GameRound.PreFlop;
-        LightManager.Instance.MoveTurnIndicator(_currentPlayers[_currentPlayerIndex].transform.position);
-        ActionHelpers.Instance.FirstBids(20);
-        ActionHelpers.Instance.FirstBids(20);
+        //LightManager.Instance.MoveTurnIndicator(_currentPlayers[_currentPlayerIndex].transform.position);
+        //ActionHelpers.Instance.FirstBids(20);
+        //ActionHelpers.Instance.FirstBids(20);
         //NOTE: First Player to bid freely is player[2]. player[0] and player[1] bid automatically by the game (20 and 40)
     }
 
@@ -87,7 +82,6 @@ public class GameLoopManager : MonoBehaviour
     }
     public List<Player> GetPlayers()
     {
-        Debug.Log("player return");
         return _currentPlayers;
     }
     private void UpdateRound()
@@ -121,12 +115,14 @@ public class GameLoopManager : MonoBehaviour
 
     public void SetupLine()
     {
+        _currentPlayers = new List<Player>(_allPlayer);
+        /*
         int firstToStart = Random.Range(0, _allPlayer.Length);
         _currentPlayers = new List<Player>();
 
         for (int i = 0; i < _allPlayer.Length; i++)
             _currentPlayers.Add(_allPlayer[(firstToStart + i) % _allPlayer.Length]);
-
+        */
     }
     public Player GetCurrentPlayer()
     {
@@ -146,7 +142,10 @@ public class GameLoopManager : MonoBehaviour
             {
                 PokerHand currentHand = PokerHandEvaluator.Instance.EvaluateHand(combination); // Her bir kombinasyonu deðerlendir
                 if (winnerHand == null)
+                {
+                    bestHand = currentHand;
                     winnerHand = combination;
+                }
                 else if (currentHand > bestHand)
                 {
                     winner = _currentPlayers[i];
@@ -188,5 +187,18 @@ public class GameLoopManager : MonoBehaviour
                 return -1;
         }
         return 0; //eller esit durumu
+    }
+    public void TryToStart()
+    {
+        if (_currentPlayers.TrueForAll(x => x.IsFull))
+            DistributeCards();
+    }
+    public void DistributeCards()
+    {
+        CardDealer.Instance.PlayDealAnimation();
+    }
+    public void NextPlayer()
+    {
+        _currentPlayerIndex = (_currentPlayerIndex + 1) % _currentPlayers.Count;
     }
 }
