@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfab33cb3eba9d9469dccfea41146974, type: 3}
   m_Name: HeartNine
   m_EditorClassIdentifier: 
+  CardSprite: {fileID: -900149014, guid: 0885eaf724213d94d8d6ed50c3d227de, type: 3}
   Sign: 2
   Value: 9
   Id: 8

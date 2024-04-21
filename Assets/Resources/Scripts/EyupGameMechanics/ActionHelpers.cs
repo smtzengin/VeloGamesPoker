@@ -8,24 +8,23 @@ public class ActionHelpers : MonoBehaviour
     public static ActionHelpers Instance;
 
     [SerializeField] private Button _fold, _call, _raise, _allInOne, _increaseBid, _decreaseBid;
-    [SerializeField] private Player _player;
+    private Player _player;
     [SerializeField] private Text _raiseText;
     private int _raiseAmount;
     private void Awake()
     {
         Instance = this;
+    }
 
+    public void SetButtonsPlayer(Player p)
+    {
+        _player = p;
         _fold.onClick.AddListener(delegate { Fold(_player); });
         _call.onClick.AddListener(delegate { Call(_player); });
         _raise.onClick.AddListener(delegate { Raise(_player, _raiseAmount); });
         _increaseBid.onClick.AddListener(delegate { IncreaseBid(); });
         _decreaseBid.onClick.AddListener(delegate { DecreaseBid(); });
-
-
-        //All-in-One için player'ýn chiplerini çekmek gerekiyor!
-
     }
-
     public void Fold(Player player)
     {
         GameLoopManager.Instance.RemovePlayer(player);

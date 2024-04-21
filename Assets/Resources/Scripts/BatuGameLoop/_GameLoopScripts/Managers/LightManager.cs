@@ -22,6 +22,6 @@ public class LightManager : MonoBehaviour
 
     public void MoveTurnIndicator(Vector3 playerPosition)
     {
-        _turnIndicatorLight.transform.position = playerPosition + new Vector3(0, 4, 0);
+        _turnIndicatorLight.transform.position = playerPosition + new Vector3(0, 6, 0);
     }
 }

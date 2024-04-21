@@ -4,7 +4,7 @@ using UnityEngine;
 [CreateAssetMenu()]
 public class CardSO : ScriptableObject
 {
-
+    public Sprite CardSprite;
     public CardSign Sign;
 
     public CardValue Value;
