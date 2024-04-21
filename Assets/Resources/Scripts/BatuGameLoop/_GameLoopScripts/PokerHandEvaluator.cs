@@ -8,7 +8,6 @@ using UnityEngine;
 public class PokerHandEvaluator : MonoBehaviour
 {
     public static PokerHandEvaluator Instance { get; private set; }
-    const int MAX_CARD = 5;
 
     private void Awake()
     {

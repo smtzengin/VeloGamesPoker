@@ -7,7 +7,10 @@ public class CardDealer : MonoBehaviour
 
     [SerializeField] private CardSO[] _cardSOs;
     [SerializeField] private List<CardSO> _remainingCards;
-
+    [SerializeField] private Transform _cardSpawnPoint;
+    [SerializeField] private GameObject _targetCard;
+    public Animator DealerAnimator { get; private set; }
+    private int _cardsGiven = 0;
     private void Awake()
     {
         if (Instance == null)
@@ -22,9 +25,11 @@ public class CardDealer : MonoBehaviour
 
     private void Start()
     {
+        DealerAnimator = GetComponent<Animator>();
         _remainingCards = new List<CardSO>(_cardSOs);
         ShuffleCards();
-        DealCardsToPlayers();
+        //DealCardsToPlayers();
+
     }
 
     private void ShuffleCards()      //Fisher-Yates shuffle algoritması
@@ -36,12 +41,10 @@ public class CardDealer : MonoBehaviour
             _remainingCards[i] = _remainingCards[randomIndex];
             _remainingCards[randomIndex] = temp;
         }
-        Debug.Log("shuffle");
     }
 
     public CardSO[] DealCardsToTable(int count)
     {
-        Debug.Log("deal table");
         CardSO[] cardsToTable = new CardSO[count];
         for (int i = 0; i < count; i++)
         {
@@ -51,31 +54,27 @@ public class CardDealer : MonoBehaviour
         }
         return cardsToTable;
     }
-    public void DealCardsToPlayers()
+    public void PlayDealAnimation()
     {
-        List<Player> players = GameLoopManager.Instance.GetPlayers();
-        Debug.Log("getplayers");
-
-        int playerCount = players.Count;
-        Debug.Log(" count" + playerCount + players.Count + " length");
-
-        for (int i = 0; i < playerCount; i++)
+        DealerAnimator.SetBool("GiveCard", true);
+    }
+    private void DealToPlayer()
+    {
+        if (_cardsGiven >= GameLoopManager.Instance.GetPlayers().Count * 2)
         {
-            List<CardSO> playerCards = new List<CardSO>();
-            for (int j = 0; j < 2; j++)
-            {
-                int randomIndex = Random.Range(0, _remainingCards.Count);
-                playerCards.Add(_remainingCards[randomIndex]);
-                _remainingCards.RemoveAt(randomIndex);
-            }
-            players[i].ReceiveCards(playerCards.ToArray());
-
-            //Debug.Log($"Player {i + 1} 'in kartlari:");
-            //foreach (var card in playerCards)
-            //{
-            //    Debug.Log($"Card: {card.Sign} - {card.Value}");
-            //}
+            DealerAnimator.SetBool("GiveCard", false);
+            return;
         }
+        _cardsGiven++;
+        Player p = GameLoopManager.Instance.GetCurrentPlayer();
+        GameLoopManager.Instance.NextPlayer();
+        int randomIndex = Random.Range(0, _remainingCards.Count);
+        CardSO newCard = _remainingCards[randomIndex];
+        p.ReceiveCards(newCard);
+        _remainingCards.RemoveAt(randomIndex);
+
+        TargetCard tCard = Instantiate(_targetCard, _cardSpawnPoint.position, Quaternion.identity).GetComponent<TargetCard>();
+        tCard.Setup(p);
     }
 
 

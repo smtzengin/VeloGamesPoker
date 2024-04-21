@@ -8,22 +8,23 @@ public class ActionHelpers : MonoBehaviour
     public static ActionHelpers Instance;
 
     [SerializeField] private Button _fold, _call, _raise, _allInOne, _increaseBid, _decreaseBid;
-    [SerializeField] private Player _player;
+    private Player _player;
     [SerializeField] private Text _raiseText;
     private int _raiseAmount;
     private void Awake()
     {
         Instance = this;
+    }
 
+    public void SetButtonsPlayer(Player p)
+    {
+        _player = p;
         _fold.onClick.AddListener(delegate { Fold(_player); });
         _call.onClick.AddListener(delegate { Call(_player); });
         _raise.onClick.AddListener(delegate { Raise(_player, _raiseAmount); });
         _increaseBid.onClick.AddListener(delegate { IncreaseBid(); });
         _decreaseBid.onClick.AddListener(delegate { DecreaseBid(); });
-        _allInOne.onClick.AddListener(delegate { AllIn(_player); });
-
     }
-
     public void Fold(Player player)
     {
         GameLoopManager.Instance.RemovePlayer(player);
@@ -51,38 +52,24 @@ public class ActionHelpers : MonoBehaviour
     public void Raise(Player player, int amount)
     {
         int newBid = 0;
-
-        if (player.GetChips() <= 0 || amount <= 0) // Eðer oyuncunun chip'i 0 veya daha azsa raise yapamaz
-        {
-            Debug.Log("Not enough chips to raise.");
-            return;
-        }
-
-        if (player.GetChips() < amount) // Eðer oyuncunun elindeki chip miktarý raise miktarýndan azsa, tüm chipleri ortaya koy
-        {
-            amount = player.GetChips();
-        }
-
-        if (player.GetCurrentBid() <= GameLoopManager.Instance.MinBid) // Player'ýn son bahsi bir önceki oyuncudan düþükse
-        {
+        if (player.GetCurrentBid() <= GameLoopManager.Instance.MinBid) //Player'ýn son bahsi bir önceki oyuncudan düþükse
             newBid = (GameLoopManager.Instance.MinBid - player.GetCurrentBid()) + amount;
-        }
 
         Debug.Log("MinBid: " + GameLoopManager.Instance.MinBid + " PlayerBid: " + player.GetCurrentBid());
         Debug.Log("NewBid: " + newBid);
         Debug.Log("CurrentBid: " + GameLoopManager.Instance.CurrentBid);
-        player.AddBid(newBid); // Player'ýn son bahsini yükselt
+        player.AddBid(newBid); //Player'ýn son bahsini yükselt
+
+
 
         GameLoopManager.Instance.CurrentBid += newBid;
         GameLoopManager.Instance.MinBid += amount;
         GameLoopManager.Instance.OnPlayerAction();
     }
-
     public void AllIn(Player player)
     {
-        int chips = player.GetChips();
-        player.AddBid(chips);
-        GameLoopManager.Instance.CurrentBid += chips;
+        //eðer oyuncunun yeteri kadar chip'i varsa:
+        //player.getchip
         GameLoopManager.Instance.OnPlayerAction();
     }
     public void IncreaseBid()
