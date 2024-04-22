@@ -8,14 +8,19 @@ public class ActionHelpers : MonoBehaviour
     public static ActionHelpers Instance;
 
     [SerializeField] private Button _fold, _call, _raise, _allInOne, _increaseBid, _decreaseBid;
+    private Button[] _buttons;
     private Player _player;
     [SerializeField] private Text _raiseText;
     private int _raiseAmount;
     private void Awake()
     {
         Instance = this;
+        SetButtonList();
     }
-
+    private void SetButtonList()
+    {
+        _buttons = new Button[]{ _fold, _call, _raise, _allInOne, _increaseBid, _decreaseBid };
+    }
     public void SetButtonsPlayer(Player p)
     {
         _player = p;
@@ -28,7 +33,6 @@ public class ActionHelpers : MonoBehaviour
     public void Fold(Player player)
     {
         GameLoopManager.Instance.RemovePlayer(player);
-        GameLoopManager.Instance.OnPlayerAction();
     }
     public void Call(Player player)
     {
@@ -47,30 +51,36 @@ public class ActionHelpers : MonoBehaviour
         player.AddBid(amount); //Player'ýn son bahsini yükselt
 
         GameLoopManager.Instance.CurrentBid += amount; //Oyundaki toplam bahsi yükselt.
-        GameLoopManager.Instance.OnPlayerAction(); //Sýrayý devam ettir.
     }
     public void Raise(Player player, int amount)
     {
         int newBid = 0;
-        if (player.GetCurrentBid() <= GameLoopManager.Instance.MinBid) //Player'ýn son bahsi bir önceki oyuncudan düþükse
+
+        if (player.GetChips() <= 0 || amount <= 0) 
+        {
+            Debug.Log("Not enough chips to raise.");
+            return;
+        }
+
+        if (player.GetChips() < amount) 
+            amount = player.GetChips();
+
+        if (player.GetCurrentBid() <= GameLoopManager.Instance.MinBid) 
             newBid = (GameLoopManager.Instance.MinBid - player.GetCurrentBid()) + amount;
 
         Debug.Log("MinBid: " + GameLoopManager.Instance.MinBid + " PlayerBid: " + player.GetCurrentBid());
         Debug.Log("NewBid: " + newBid);
         Debug.Log("CurrentBid: " + GameLoopManager.Instance.CurrentBid);
-        player.AddBid(newBid); //Player'ýn son bahsini yükselt
-
-
+        player.AddBid(newBid);
 
         GameLoopManager.Instance.CurrentBid += newBid;
         GameLoopManager.Instance.MinBid += amount;
-        GameLoopManager.Instance.OnPlayerAction();
     }
     public void AllIn(Player player)
     {
-        //eðer oyuncunun yeteri kadar chip'i varsa:
-        //player.getchip
-        GameLoopManager.Instance.OnPlayerAction();
+        int chips = player.GetChips();
+        player.AddBid(chips);
+        GameLoopManager.Instance.CurrentBid += chips;
     }
     public void IncreaseBid()
     {
@@ -90,12 +100,10 @@ public class ActionHelpers : MonoBehaviour
         }
     }
 
-    public void FirstBids(int amount)
+    public void SetInteraction(bool active)
     {
-        Player p = GameLoopManager.Instance.GetCurrentPlayer();
-            Raise(p, amount);
+        for (int i = 0; i < _buttons.Length; i++)
+            _buttons[i].interactable = active;
     }
-
-
 
 }

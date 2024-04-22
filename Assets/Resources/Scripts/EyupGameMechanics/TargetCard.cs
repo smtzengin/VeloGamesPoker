@@ -11,6 +11,10 @@ public class TargetCard : MonoBehaviour
     public void Setup(Player target)
     {
         _target = target;
+        Vector3 targetPostition = new Vector3(target.transform.position.x,
+                                       this.transform.position.y,
+                                       target.transform.position.z);
+        transform.LookAt(targetPostition);
     }
     // Update is called once per frame
     void Update()

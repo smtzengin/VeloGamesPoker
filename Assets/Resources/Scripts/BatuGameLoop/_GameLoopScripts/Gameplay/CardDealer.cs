@@ -9,6 +9,8 @@ public class CardDealer : MonoBehaviour
     [SerializeField] private List<CardSO> _remainingCards;
     [SerializeField] private Transform _cardSpawnPoint;
     [SerializeField] private GameObject _targetCard;
+    [SerializeField] private DealerButton _dealerButton;
+    private int _playerIndex;
     public Animator DealerAnimator { get; private set; }
     private int _cardsGiven = 0;
     private void Awake()
@@ -60,9 +62,10 @@ public class CardDealer : MonoBehaviour
     }
     private void DealToPlayer()
     {
-        if (_cardsGiven >= GameLoopManager.Instance.GetPlayers().Count * 2)
+        if (_cardsGiven >= GameLoopManager.Instance.GetCurrentPlayers().Count * 2)
         {
             DealerAnimator.SetBool("GiveCard", false);
+            GameLoopManager.Instance.StartRound();
             return;
         }
         _cardsGiven++;
@@ -75,6 +78,12 @@ public class CardDealer : MonoBehaviour
 
         TargetCard tCard = Instantiate(_targetCard, _cardSpawnPoint.position, Quaternion.identity).GetComponent<TargetCard>();
         tCard.Setup(p);
+    }
+    public void GiveDealerButton(int playerIndex)
+    {
+        List<Player> players = GameLoopManager.Instance.GetCurrentPlayers();
+        _dealerButton.SetTarget(players[playerIndex].GetDealerTransform());
+        PlayDealAnimation();
     }
 
 

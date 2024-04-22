@@ -5,7 +5,7 @@ public class GameLoopManager : MonoBehaviour
 {
     public static GameLoopManager Instance { get; private set; }
 
-    [SerializeField] Player[] _allPlayer;
+    [SerializeField] Player[] _allPlayers;
     [SerializeField] List<Player> _currentPlayers;
 
     private int _currentPlayerIndex = 0;
@@ -15,6 +15,8 @@ public class GameLoopManager : MonoBehaviour
 
     [SerializeField] private int _minBid = 20;
     [SerializeField] private int _currentBid;
+    private int _dealerButtonIndex;
+    private bool _littleBid = false, _bigBid = false;
 
     public int MinBid
     {
@@ -49,7 +51,6 @@ public class GameLoopManager : MonoBehaviour
         //LightManager.Instance.MoveTurnIndicator(_currentPlayers[_currentPlayerIndex].transform.position);
         //ActionHelpers.Instance.FirstBids(20);
         //ActionHelpers.Instance.FirstBids(20);
-        //NOTE: First Player to bid freely is player[2]. player[0] and player[1] bid automatically by the game (20 and 40)
     }
 
     public void OnPlayerAction()
@@ -59,16 +60,16 @@ public class GameLoopManager : MonoBehaviour
         if (_actionCount >= 4)
             CheckBids();
 
-        _currentPlayerIndex = (_currentPlayerIndex + 1) % _currentPlayers.Count;
-
-
+        NextPlayer();
+        //Check if it is ai's Turn.
+        CheckTurn();
         LightManager.Instance.MoveTurnIndicator(_currentPlayers[_currentPlayerIndex].transform.position);
 
         Debug.Log($"Simdi Player {_currentPlayerIndex + 1}' in turu {_currentRound} roundunda.");
     }
     public void CheckBids()
     {
-        if (_currentRound != GameRound.PreFlop || (_currentRound == GameRound.PreFlop && _actionCount > 6))
+        if (_currentRound != GameRound.PreFlop || (_currentRound == GameRound.PreFlop && _actionCount > 5))
         {
             int lastBid = _currentPlayers[_currentPlayerIndex].GetCurrentBid();
             if (_currentPlayers.TrueForAll((x) => x.GetCurrentBid() == lastBid))
@@ -80,9 +81,13 @@ public class GameLoopManager : MonoBehaviour
         _currentPlayers.Remove(p);
         _currentPlayerIndex--;
     }
-    public List<Player> GetPlayers()
+    public List<Player> GetCurrentPlayers()
     {
         return _currentPlayers;
+    }
+    public Player[] GetPlayersInLine()
+    {
+        return _allPlayers;
     }
     private void UpdateRound()
     {
@@ -115,14 +120,18 @@ public class GameLoopManager : MonoBehaviour
 
     public void SetupLine()
     {
-        _currentPlayers = new List<Player>(_allPlayer);
-        /*
-        int firstToStart = Random.Range(0, _allPlayer.Length);
+        int firstToStart = Random.Range(0, _allPlayers.Length);
         _currentPlayers = new List<Player>();
 
-        for (int i = 0; i < _allPlayer.Length; i++)
-            _currentPlayers.Add(_allPlayer[(firstToStart + i) % _allPlayer.Length]);
-        */
+        for (int i = 0; i < _allPlayers.Length; i++)
+            _currentPlayers.Add(_allPlayers[(firstToStart + i) % _allPlayers.Length]);
+        _dealerButtonIndex = 0;
+        _currentPlayerIndex++;
+    }
+    public void NextDealer()
+    {
+        _dealerButtonIndex++;
+        _currentPlayerIndex = _dealerButtonIndex + 1;
     }
     public Player GetCurrentPlayer()
     {
@@ -162,7 +171,7 @@ public class GameLoopManager : MonoBehaviour
                     }
                 }
 
-                if(currentHand > playersBestHand)
+                if (currentHand > playersBestHand)
                 {
                     playersBestHand = currentHand;
                 }
@@ -172,7 +181,7 @@ public class GameLoopManager : MonoBehaviour
 
         }
         Debug.Log($"Winner: {winner} Hand: {bestHand}");
-        
+
     }
     private int CompareHands(List<CardSO> hand1, List<CardSO> hand2)
     {
@@ -195,10 +204,39 @@ public class GameLoopManager : MonoBehaviour
     }
     public void DistributeCards()
     {
+        CardDealer.Instance.GiveDealerButton(_dealerButtonIndex);
         CardDealer.Instance.PlayDealAnimation();
     }
     public void NextPlayer()
     {
         _currentPlayerIndex = (_currentPlayerIndex + 1) % _currentPlayers.Count;
+    }
+    void CheckTurn()
+    {
+        if (!_littleBid)
+        {
+            ActionHelpers.Instance.Raise(_currentPlayers[_currentPlayerIndex], 20);
+            _littleBid = true;
+            return;
+        }
+        else if (!_bigBid)
+        {
+            ActionHelpers.Instance.Raise(_currentPlayers[_currentPlayerIndex], 20);
+            _bigBid = true;
+            return;
+        }
+
+        if (_currentPlayers[_currentPlayerIndex].CompareTag("Player") && _minBid != 0)
+            ActionHelpers.Instance.SetInteraction(true);
+        else
+        {
+            ActionHelpers.Instance.SetInteraction(false);
+            //Get AI Choose
+        }
+    }
+    public void StartRound()
+    {
+        LightManager.Instance.MoveTurnIndicator(_currentPlayers[_currentPlayerIndex].transform.position);
+        CheckTurn();
     }
 }
