@@ -5,8 +5,8 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public GameObject Character { get; private set; }
-    public bool IsFull { get; private set; } 
-    
+    public bool IsFull { get; private set; }
+
     [SerializeField] private List<CardSO> _hand;
     [SerializeField] private int _chips = 2000;
     [SerializeField] private int _currentBid;
@@ -15,16 +15,20 @@ public class Player : MonoBehaviour
 
     [SerializeField] private GameObject[] _onHandCards;
     private int _onHandCounter = 0;
-    PlayerAnimation _playerAnimation;
+    private PlayerAnimation _playerAnimation;
+
+    public bool IsLocalPlayer { get { return _localPlayer; } }
+    [SerializeField] private bool _localPlayer;
 
     private void Awake()
     {
         _hand = new List<CardSO>();
     }
-
     public void ReceiveCards(CardSO card)
     {
         _hand.Add(card);
+        if (_localPlayer)
+            UIManager.AddCard(card, true);
     }
     public void ClearHand()
     {

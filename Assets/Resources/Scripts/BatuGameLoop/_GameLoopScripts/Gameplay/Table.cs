@@ -27,7 +27,7 @@ public class Table : MonoBehaviour
         foreach (var card in cardsToTable)
         {
             _tableCards.Add(card);
-            Debug.Log($"Masaya acilan kart: {card.Sign} - {card.Value}");
+            UIManager.AddCard(card, false);
         }
 
     }

@@ -234,11 +234,14 @@ public class GameLoopManager : MonoBehaviour
             return;
         }
 
-        if (_currentPlayers[_currentPlayerIndex].CompareTag("Player") && _minBid != 0)
-            ActionHelpers.Instance.SetInteraction(true);
+            Debug.Log(_currentPlayers[_currentPlayerIndex]);
+        if (_currentPlayers[_currentPlayerIndex].IsLocalPlayer && _minBid != 0)
+        {
+            UIManager.ButtonActive(active: true);
+        }
         else
         {
-            ActionHelpers.Instance.SetInteraction(false);
+            UIManager.ButtonActive(active: false);
             //Get AI Choose
         }
     }
