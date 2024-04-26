@@ -30,8 +30,6 @@ public class LoginPanel : MonoBehaviour
             string password = passwordInputField.text;
             StartCoroutine(_firebaseManager.Login(email, password, warningText));
         }
-
-
         emailInputField.text = string.Empty;
         passwordInputField.text = string.Empty;
     }
