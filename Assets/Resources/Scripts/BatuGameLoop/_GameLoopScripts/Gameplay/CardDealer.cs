@@ -52,6 +52,10 @@ public class CardDealer : MonoBehaviour
         {
             int randomIndex = Random.Range(0, _remainingCards.Count);
             cardsToTable[i] = _remainingCards[randomIndex];
+
+            TargetCard card = Instantiate(_targetCard, _cardSpawnPoint.position, Quaternion.identity).GetComponent<TargetCard>();
+            card.Setup(Table.Instance.NextCardHolder());
+
             _remainingCards.RemoveAt(randomIndex);
         }
         return cardsToTable;
@@ -77,7 +81,7 @@ public class CardDealer : MonoBehaviour
         _remainingCards.RemoveAt(randomIndex);
 
         TargetCard tCard = Instantiate(_targetCard, _cardSpawnPoint.position, Quaternion.identity).GetComponent<TargetCard>();
-        tCard.Setup(p);
+        tCard.Setup(p.transform);
     }
     public void GiveDealerButton(int playerIndex)
     {

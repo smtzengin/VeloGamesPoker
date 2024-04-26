@@ -94,20 +94,20 @@ public class GameLoopManager : MonoBehaviour
         switch (_currentRound)
         {
             case GameRound.PreFlop:
+                ChipsHandler.Instance.NextGameLoop();
                 _currentRound = GameRound.Flop;
                 break;
             case GameRound.Flop:
+                ChipsHandler.Instance.NextGameLoop();
                 _currentRound = GameRound.Turn;
-                Table.Instance.AckardToTable(3);
                 break;
             case GameRound.Turn:
+                ChipsHandler.Instance.NextGameLoop();
                 _currentRound = GameRound.River;
-                Table.Instance.AckardToTable(1);
                 break;
             case GameRound.River:
+                ChipsHandler.Instance.NextGameLoop();
                 _currentRound = GameRound.Showdown;
-                Table.Instance.AckardToTable(1);
-
                 break;
             case GameRound.Showdown:
                 Debug.Log($"Turlar bitti/ Oyun bitti");
@@ -117,7 +117,15 @@ public class GameLoopManager : MonoBehaviour
         _actionCount = 0;
         Debug.Log($"Round suan {_currentRound}");
     }
-
+    public void Ackard()
+    {
+        if (_currentRound == GameRound.Flop)
+            Table.Instance.AckardToTable(3);
+        if (_currentRound == GameRound.Turn)
+            Table.Instance.AckardToTable(1);
+        if (_currentRound == GameRound.River)
+            Table.Instance.AckardToTable(1);
+    }
     public void SetupLine()
     {
         int firstToStart = Random.Range(0, _allPlayers.Length);
