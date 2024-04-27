@@ -157,15 +157,18 @@ public class PokerHandEvaluator : MonoBehaviour
 
             }
 
-        List<CardSO> lastCombination = new List<CardSO>
+        if (Table.Instance.GetCards().Count == 5)
         {
-            tableCards[0],
-            tableCards[2],
-            tableCards[4],
-            playerHand[0],
-            playerHand[1],
-        };
-        combinations.Add(lastCombination);
+            List<CardSO> lastCombination = new List<CardSO>
+            {
+                tableCards[0],
+                tableCards[2],
+                tableCards[4],
+                playerHand[0],
+                playerHand[1],
+            };
+            combinations.Add(lastCombination);
+        }
 
         return combinations;
     }

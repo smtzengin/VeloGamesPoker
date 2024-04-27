@@ -7,7 +7,7 @@ public class Player : MonoBehaviour
     public GameObject Character { get; private set; }
     public bool IsFull { get; private set; }
 
-    [SerializeField] private List<CardSO> _hand;
+    [SerializeField] protected List<CardSO> _hand;
     [SerializeField] private int _chips = 2000;
     [SerializeField] private int _currentBid;
     [SerializeField] private int _lastBid;

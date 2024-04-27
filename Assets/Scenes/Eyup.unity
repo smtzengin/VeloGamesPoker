@@ -5055,7 +5055,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1584148527}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4713cf4f7997a8743a17e80fd1eb7176, type: 3}
+  m_Script: {fileID: 11500000, guid: 7e0a5401ac1c1ae498c58705ae10594b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _hand: []
@@ -5065,6 +5065,12 @@ MonoBehaviour:
   _dealerTransform: {fileID: 31989326}
   _onHandCards: []
   _localPlayer: 0
+  Aggression: 0
+  Caution: 0
+  Stupidity: 0
+  Randomness: 0
+  RaiseThreshold: 0
+  CallThreshold: 0
 --- !u!1 &1591863381
 GameObject:
   m_ObjectHideFlags: 0
@@ -5641,7 +5647,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1718501121}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4713cf4f7997a8743a17e80fd1eb7176, type: 3}
+  m_Script: {fileID: 11500000, guid: 7e0a5401ac1c1ae498c58705ae10594b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _hand: []
@@ -5651,6 +5657,12 @@ MonoBehaviour:
   _dealerTransform: {fileID: 1872115789}
   _onHandCards: []
   _localPlayer: 0
+  Aggression: 0
+  Caution: 0
+  Stupidity: 0
+  Randomness: 0
+  RaiseThreshold: 0
+  CallThreshold: 0
 --- !u!1 &1739921146
 GameObject:
   m_ObjectHideFlags: 0
@@ -6272,7 +6284,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1964513889}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4713cf4f7997a8743a17e80fd1eb7176, type: 3}
+  m_Script: {fileID: 11500000, guid: e8d130a58cd627048af37578d6571c88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _hand: []
@@ -6282,6 +6294,12 @@ MonoBehaviour:
   _dealerTransform: {fileID: 475069778}
   _onHandCards: []
   _localPlayer: 0
+  Aggression: 0
+  Caution: 0
+  Stupidity: 0
+  Randomness: 0
+  RaiseThreshold: 0
+  CallThreshold: 0
 --- !u!1 &1969605546
 GameObject:
   m_ObjectHideFlags: 0
@@ -6456,6 +6474,7 @@ MonoBehaviour:
   _currentRound: 0
   _minBid: 0
   _currentBid: 0
+  InRoundTour: 0
 --- !u!1 &2001733141
 GameObject:
   m_ObjectHideFlags: 0

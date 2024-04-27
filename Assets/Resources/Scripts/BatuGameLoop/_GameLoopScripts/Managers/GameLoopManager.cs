@@ -18,6 +18,7 @@ public class GameLoopManager : MonoBehaviour
     private int _dealerButtonIndex;
     private bool _littleBid = false, _bigBid = false;
 
+    public int InRoundTour = 0;
     public int MinBid
     {
         get { return _minBid; }
@@ -57,6 +58,9 @@ public class GameLoopManager : MonoBehaviour
     {
         Debug.Log($"Player {_currentPlayerIndex + 1} aksiyon aldi {_currentRound} roundunda.");
         _actionCount++;
+
+        if (_actionCount % _currentPlayers.Count == 0)
+            InRoundTour++;
         if (_actionCount >= 4)
             CheckBids();
 
@@ -116,6 +120,7 @@ public class GameLoopManager : MonoBehaviour
                 break;
         }
         _actionCount = 0;
+        InRoundTour = 0;
         ResetBet();
         Debug.Log($"Round suan {_currentRound}");
     }
@@ -184,19 +189,15 @@ public class GameLoopManager : MonoBehaviour
                     bestHand = currentHand;
                 }
                 else if (currentHand == bestHand)
-                {
                     if (CompareHands(combination, winnerHand) == 1)
                     {
                         winner = _currentPlayers[i];
                         winnerHand = combination;
                         bestHand = currentHand;
                     }
-                }
 
                 if (currentHand > playersBestHand)
-                {
                     playersBestHand = currentHand;
-                }
 
             }
             Debug.Log($"Player {_currentPlayers[i].name}'s Hand: {playersBestHand}");
@@ -247,7 +248,7 @@ public class GameLoopManager : MonoBehaviour
         else
         {
             UIManager.AllButtonsActive(active: false);
-            //Get AI Choose
+            _currentPlayers[_currentPlayerIndex].GetComponent<AIClass>().AIMakeDecision();
         }
     }
     public void StartRound()
