@@ -18,42 +18,26 @@ public class ChipsHandler : MonoBehaviour
 
     [SerializeField] private Transform _middle;
     private bool _moveToMiddle;
+
     private void Awake() { Instance = this; CreateChips(); }
 
 
+    //Player bid animasyonu bittikten sonra çaðýrýlýr
     public GameObject BidChips(Player p)
     {
-        int counter = 0;
         int lastBid = p.GetLastBid();
 
+        //Kaç chip gerektiðini hesapla
         int amount100 = CalculateAmount(ref lastBid, 100);
         int amount40 = CalculateAmount(ref lastBid, 40);
         int amount20 = CalculateAmount(ref lastBid, 20);
 
-
+        //Daha önceden betchips oluþturulmamýþ ise yeni oluþtur 
         if (!_playerBetChips.ContainsKey(p))
-        {
-            _playerBetChips.Add(p, new GameObject());
-
-            GameObject bet20 = new GameObject();
-            bet20.name = "20s";
-            bet20.transform.SetParent(_playerBetChips[p].transform);
-            bet20.transform.localPosition = Vector3.zero + (p.transform.right * -0.1f);
-
-            GameObject bet40 = new GameObject();
-            bet40.name = "40s";
-            bet40.transform.SetParent(_playerBetChips[p].transform);
-            bet40.transform.localPosition = Vector3.zero;
-
-            GameObject bet100 = new GameObject();
-            bet100.name = "100s";
-            bet100.transform.SetParent(_playerBetChips[p].transform);
-            bet100.transform.localPosition = Vector3.zero + (p.transform.right * 0.1f);
-
-        }
-
+            CreateBetChip(p);
         _playerBetChips[p].transform.position = p.GetDealerTransform().position;
 
+        //Yeni transform oluþtur (Pozisyonu hareket ettirmek için) ve chipi yerine koy
         Transform chip;
         for (int i = 0; i < amount100; i++)
         {
@@ -82,12 +66,13 @@ public class ChipsHandler : MonoBehaviour
     private void MoveToMiddle()
     {
         bool reached = true;
-
+        //reached true olana kadar tüm playerbetchipleri ortaya doðru hareket ettir.
         for (int i = 0; i < _playerBetChips.Count; i++)
         {
             Player p = GameLoopManager.Instance.GetCurrentPlayers()[i];
             Vector3 direction = (_middle.transform.position - _playerBetChips[p].transform.position).normalized;
             _playerBetChips[p].transform.position += direction * 3 * Time.deltaTime;
+
             if (Vector3.Distance(_playerBetChips[p].transform.position, _middle.position) > 0.2f)
                 reached = false;
         }
@@ -97,8 +82,12 @@ public class ChipsHandler : MonoBehaviour
             {
                 Player p = GameLoopManager.Instance.GetCurrentPlayers()[i];
                 for (int j = 0; j < 3; j++)
+                {
                     for (int k = 0; k < _playerBetChips[p].transform.GetChild(j).childCount; k++)
-                        _playerBetChips[p].transform.GetChild(j).gameObject.SetActive(false);
+                        _playerBetChips[p].transform.GetChild(j).GetChild(k).gameObject.SetActive(false);
+
+                    _playerBetChips[p].transform.position = p.GetDealerTransform().position;
+                }
             }
             _playerBetChips.Clear();
 
@@ -114,6 +103,8 @@ public class ChipsHandler : MonoBehaviour
     }
     private void CreateChips()
     {
+        //Chip Object Pooling
+
         _chips20 = new Transform[MAX_20_CHIPS];
         _chips40 = new Transform[MAX_40_CHIPS];
         _chips100 = new Transform[MAX_100_CHIPS];
@@ -135,14 +126,16 @@ public class ChipsHandler : MonoBehaviour
         }
     }
 
+    //divider = chipin deðeri
+    //divider 100 ise 100lük çip anlamýna geliyor.
     private int CalculateAmount(ref int lastBid, int divider)
     {
-        Debug.Log($"LastBid: {lastBid} Divider: {divider}");
         int amount = lastBid / divider;
         lastBid -= amount * divider;
-        Debug.Log($"LastBid: {lastBid} Amount: {amount}");
         return amount;
     }
+
+    //Chip object poolingten aktif olmayaný çek.
     private Transform GetChip(Transform[] chips)
     {
         for (int i = 0; i < chips.Length; i++)
@@ -164,5 +157,24 @@ public class ChipsHandler : MonoBehaviour
         for (int i = 0; i < _playerBetChips[p].transform.GetChild(pos).childCount; i++)
             newHeight += 0.02f;
         return newHeight;
+    }
+    private void CreateBetChip(Player p)
+    {
+        _playerBetChips.Add(p, new GameObject());
+
+        GameObject bet20 = new GameObject();
+        bet20.name = "20s";
+        bet20.transform.SetParent(_playerBetChips[p].transform);
+        bet20.transform.localPosition = Vector3.zero + (p.transform.right * -0.1f);
+
+        GameObject bet40 = new GameObject();
+        bet40.name = "40s";
+        bet40.transform.SetParent(_playerBetChips[p].transform);
+        bet40.transform.localPosition = Vector3.zero;
+
+        GameObject bet100 = new GameObject();
+        bet100.name = "100s";
+        bet100.transform.SetParent(_playerBetChips[p].transform);
+        bet100.transform.localPosition = Vector3.zero + (p.transform.right * 0.1f);
     }
 }

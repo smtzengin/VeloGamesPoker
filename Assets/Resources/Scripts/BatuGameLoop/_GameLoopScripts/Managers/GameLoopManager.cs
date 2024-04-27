@@ -60,6 +60,7 @@ public class GameLoopManager : MonoBehaviour
         if (_actionCount >= 4)
             CheckBids();
 
+        UIManager.UpdateTableChipText(_currentBid);
         NextPlayer();
         //Check if it is ai's Turn.
         CheckTurn();
@@ -115,6 +116,7 @@ public class GameLoopManager : MonoBehaviour
                 break;
         }
         _actionCount = 0;
+        ResetBet();
         Debug.Log($"Round suan {_currentRound}");
     }
     public void Ackard()
@@ -144,6 +146,18 @@ public class GameLoopManager : MonoBehaviour
     public Player GetCurrentPlayer()
     {
         return _currentPlayers[_currentPlayerIndex];
+    }
+    public Player GetLastPlayer()
+    {
+        return _currentPlayers[(_currentPlayerIndex + (_currentPlayers.Count - 1)) % _currentPlayers.Count];
+    }
+    private void ResetBet()
+    {
+        _minBid = 40;
+        for (int i = 0; i < _currentPlayers.Count; i++)
+        {
+            _currentPlayers[i].ResetBets();
+        }
     }
     public void SelectBestCombination()
     {
@@ -221,27 +235,18 @@ public class GameLoopManager : MonoBehaviour
     }
     void CheckTurn()
     {
-        if (!_littleBid)
-        {
-            ActionHelpers.Instance.Raise(_currentPlayers[_currentPlayerIndex], 20);
-            _littleBid = true;
-            return;
-        }
-        else if (!_bigBid)
-        {
-            ActionHelpers.Instance.Raise(_currentPlayers[_currentPlayerIndex], 20);
-            _bigBid = true;
-            return;
-        }
 
-            Debug.Log(_currentPlayers[_currentPlayerIndex]);
-        if (_currentPlayers[_currentPlayerIndex].IsLocalPlayer && _minBid != 0)
+        if (!AreFirstBetsDone())
+            return;
+
+        if (_currentPlayers[_currentPlayerIndex].IsLocalPlayer) //Sýradaki karakter bizim karakter ise
         {
-            UIManager.ButtonActive(active: true);
+            UIManager.AllButtonsActive(active: true);
+            ActionHelpers.Instance.CheckChips(_currentPlayers[_currentPlayerIndex]);
         }
         else
         {
-            UIManager.ButtonActive(active: false);
+            UIManager.AllButtonsActive(active: false);
             //Get AI Choose
         }
     }
@@ -249,5 +254,21 @@ public class GameLoopManager : MonoBehaviour
     {
         LightManager.Instance.MoveTurnIndicator(_currentPlayers[_currentPlayerIndex].transform.position);
         CheckTurn();
+    }
+    private bool AreFirstBetsDone()
+    {
+        if (!_littleBid)
+        {
+            ActionHelpers.Instance.Raise(_currentPlayers[_currentPlayerIndex], 20);
+            _littleBid = true;
+            return false;
+        }
+        else if (!_bigBid)
+        {
+            ActionHelpers.Instance.Raise(_currentPlayers[_currentPlayerIndex], 20);
+            _bigBid = true;
+            return false;
+        }
+        return true;
     }
 }

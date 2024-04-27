@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,16 +11,16 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Image[] _tableCards;
     private byte _handIndex = 0;
     private byte _tableIndex = 0;
+    [SerializeField] private TextMeshProUGUI _tableChipText, _playerChipText;
+    // 0. FOLD, 1. Call, 2. All In One, 3. Raise, 4. Decrease, 5. Increase
     [SerializeField] private Button[] _buttons;
 
     private void Awake()
     {
         instance = this;
-        for (int i = 0; i < _handCards.Length; i++)
-        {
-            _handCards[i].enabled = false;
-        }
     }
+
+    //Add card to hand or table
     public static void AddCard(CardSO card, bool toHand)
     {
         if (toHand)
@@ -38,7 +39,8 @@ public class UIManager : MonoBehaviour
         _tableCards[_tableIndex++ % _tableCards.Length].enabled = true;
     }
 
-    public static void ButtonActive(bool active)
+    //Set all butons to active or not.
+    public static void AllButtonsActive(bool active)
     {
         instance.SetButton(active);
     }
@@ -46,6 +48,23 @@ public class UIManager : MonoBehaviour
     {
         for (int i = 0; i < _buttons.Length; i++)
             _buttons[i].interactable = active;
+    }    
+    //Set one buton to active or not.
+    public static void ButtonActive(int line, bool allow)
+    {
+        instance._buttons[line].interactable = allow;
     }
-
+    //Set call button's text to check or call
+    public static void CallCheckText(bool isCheck)
+    {
+        instance._buttons[1].transform.GetChild(0).GetComponent<Text>().text = isCheck ? "Check" : "Call";
+    }
+    public static void UpdateTableChipText(int amount)
+    {
+        instance._tableChipText.text = amount.ToString();
+    }
+    public static void UpdatePlayerChips(int amount)
+    {
+        instance._playerChipText.text = amount.ToString();
+    }
 }

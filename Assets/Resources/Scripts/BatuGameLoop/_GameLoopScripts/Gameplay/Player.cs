@@ -23,6 +23,9 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         _hand = new List<CardSO>();
+        //geçici olarak 2000 chip atýyoruz hepsine
+        if (_localPlayer)
+            UIManager.UpdatePlayerChips(_chips);
     }
     public void ReceiveCards(CardSO card)
     {
@@ -34,7 +37,6 @@ public class Player : MonoBehaviour
     {
         _hand.Clear();
     }
-
     public List<CardSO> GetHand()
     {
         return _hand;
@@ -47,6 +49,9 @@ public class Player : MonoBehaviour
         _lastBid = amount;
         _currentBid += amount;
         DecreaseChips(amount);
+
+        if(_localPlayer)
+            UIManager.UpdatePlayerChips(_chips);
     }
     public int GetChips() { return _chips; }
     public void DecreaseChips(int amount) { _chips -= amount; }
@@ -63,5 +68,12 @@ public class Player : MonoBehaviour
         Character = character;
         _playerAnimation = character.GetComponent<PlayerAnimation>();
     }
+
+    //For Dealer Button and Chips
     public Transform GetDealerTransform() { return _dealerTransform; }
+    public void ResetBets()
+    {
+        _currentBid = 0;
+        _lastBid = 0;
+    }
 }
