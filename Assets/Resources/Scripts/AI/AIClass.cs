@@ -11,34 +11,28 @@ public class AIClass : Player
     public float Randomness; //rastgele icin
     public float RaiseThreshold; // threshold for raise
     public float CallThreshold; // threshold for raise
-
     public void AIMakeDecision()
     {
         if (Table.Instance.GetCards().Count < 3)
         {
-            Debug.Log("Not enough cards on the table to evaluate a hand.");
-            float decision = Aggression * (HandCardPoint() / 2) * Randomness * Random.Range(0.5f, 1.5f) / (Caution + Stupidity);
-            if (GameLoopManager.Instance.InRoundTour != 3)
-            {
-                if (decision >= RaiseThreshold)
-                    RaiseBet();
-                else if (decision >= CallThreshold)
-                    CallCheckBet();
-                else if (GameLoopManager.Instance.InRoundTour == 0)
-                    Fold();
-                else
-                    CallCheckBet();
-            }
-            else
-                CallCheckBet();
+            BeforeCards();
             return;
         }
 
+        AfterCards();
+    }
+    private void BeforeCards()
+    {
+        float decision = Aggression * Mathf.Log(2,(HandCardPoint() + OnePairPoint()) / 2f) * Randomness * Random.Range(0.5f, 1.5f) / (Caution + Stupidity);
+        TryBet(decision);
+    }
+    private void AfterCards()
+    {
         List<List<CardSO>> combinations = PokerHandEvaluator.Instance.GenerateCombinations(Table.Instance.GetCards(), GetHand()); //olasi kombinasyonlar
 
-        if (combinations.Count == 0) //kombinasyon yoksa
+        if (combinations.Count == 0) //kombinasyon yoksa (imkansız ?)
         {
-            Debug.Log("No valid combinations could be generated.");
+            BeforeCards();
             return;
         }
 
@@ -46,32 +40,23 @@ public class AIClass : Player
             .Select(hand => PokerHandEvaluator.Instance.EvaluateHand(hand)) //handi alır degerlendirir
             .Aggregate((highest, next) => next > highest ? next : highest); //birlesitrme // en yüksek olani dondur
 
+        Debug.Log((int)bestHand);
 
-        float handStrength = (float)bestHand / (float)PokerHand.RoyalFlush;  // Normalized hand strength
-        float decisionFactor = Aggression * handStrength - Caution + Random.Range(-Randomness, Randomness);
-
-        // Karar verme
-        if (handStrength < 0.2 && decisionFactor < 0) // Zayıf el
-        {
-            AIBehaviors.Fold(this);
-        }
-        else if (handStrength > 0.7 || decisionFactor > 0.5) // Güçlü el veya yüksek agresyon
-        {
-            int betAmount = CalculateBetAmount(handStrength);
-            AIBehaviors.Bet(this, betAmount);
-        }
-        else //call yok
-        {
-            AIBehaviors.Call(this);
-        }
+        float decision = Aggression * Mathf.Log(2, (HandCardPoint() + (int)bestHand) / 2f) * Randomness * Random.Range(0.5f, 1.5f) / (Caution + Stupidity);
+        TryBet(decision);
     }
 
-    private int CalculateBetAmount(float handStrength)
+    private void TryBet(float decision)
     {
-        int minBet = GameLoopManager.Instance.MinBid;
-        int currentBid = GameLoopManager.Instance.CurrentBid;
-        int raiseAmount = (int)(handStrength * (GetChips() * 0.25f)); // Örnek: el gücüne göre çiplerin %25'i kadar artır
-        return Mathf.Max(minBet, raiseAmount);
+        if (GameLoopManager.Instance.InRoundTour != 3)
+            if (decision >= RaiseThreshold)
+                RaiseBet();
+            else if (decision >= CallThreshold || GameLoopManager.Instance.InRoundTour == 0)
+                CallCheckBet();
+            else
+                Fold();
+        else
+            CallCheckBet();
     }
 
     private int HandCardPoint()
@@ -81,13 +66,17 @@ public class AIClass : Player
             value += (int)_hand[i].Value;
         return value;
     }
+    private int OnePairPoint()
+    {
+        return PokerHandEvaluator.Instance.HasPair(_hand) ? 10 : 0;
+    }
     private void RaiseBet()
     {
         Debug.Log("RAISED");
+        Debug.Log("--------RAISE VALUES-------");
         if (Table.Instance.GetCards().Count < 3)
         {
-            Debug.Log("--------RAISE VALUES-------");
-            float handValue = HandCardPoint() / 2f; //Minimum 2, Maximum 14 puan
+            float handValue = HandCardPoint() / 3f; //Minimum 4/3, Maximum 28/3 puan
             Debug.Log(handValue);
             int raiseValue = Mathf.CeilToInt(handValue * 10 * Random.Range(0.2f, 1.501f) / 40) * 40;
             Debug.Log(raiseValue);
@@ -97,9 +86,12 @@ public class AIClass : Player
             if (raiseValue < 40)
                 raiseValue = 40;
             ActionHelpers.Instance.Raise(this, raiseValue);
-            Debug.Log("--------------------------");
         }
+        else
+        {
 
+        }
+        Debug.Log("--------------------------");
     }
     private void CallCheckBet()
     {
