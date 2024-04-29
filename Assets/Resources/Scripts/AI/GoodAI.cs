@@ -6,7 +6,7 @@ public class GoodAI : AIClass
         Caution = 0.8f;
         Stupidity = -0.2f;
         Randomness = 0.4f;
-        RaiseThreshold = 7;
-        CallThreshold = 2;
+        RaiseThreshold = 2.2f;
+        CallThreshold = 0.74f;
     }
 }

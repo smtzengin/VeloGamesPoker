@@ -23,7 +23,13 @@ public class AIClass : Player
     }
     private void BeforeCards()
     {
-        float decision = Aggression * Mathf.Log(2,(HandCardPoint() + OnePairPoint()) / 2f) * Randomness * Random.Range(0.5f, 1.5f) / (Caution + Stupidity);
+        float rand = Random.Range(0.5f, 1.5f);
+        float decision = Aggression * Mathf.Log((HandCardPoint() + OnePairPoint()) / 2f, 2) * Randomness * rand / (Caution + Stupidity);
+
+        Debug.Log("------------------------");
+        Debug.Log($"Decision = {decision}, log = {Mathf.Log((HandCardPoint() + OnePairPoint()) / 2f, 2)}");
+        Debug.Log("------------------------");
+
         TryBet(decision);
     }
     private void AfterCards()
@@ -40,9 +46,12 @@ public class AIClass : Player
             .Select(hand => PokerHandEvaluator.Instance.EvaluateHand(hand)) //handi alır degerlendirir
             .Aggregate((highest, next) => next > highest ? next : highest); //birlesitrme // en yüksek olani dondur
 
-        Debug.Log((int)bestHand);
+        float rand = Random.Range(0.5f, 1.5f);
+        float decision = Aggression * Mathf.Log(2, (HandCardPoint() + (int)bestHand) / 2f) * Randomness * rand / (Caution + Stupidity);
 
-        float decision = Aggression * Mathf.Log(2, (HandCardPoint() + (int)bestHand) / 2f) * Randomness * Random.Range(0.5f, 1.5f) / (Caution + Stupidity);
+        Debug.Log("------------------------");
+        Debug.Log($"BestHand = {(int)bestHand}, decision = {decision}, log = {Mathf.Log(2, (HandCardPoint() + (int)bestHand) / 2f)}");
+        Debug.Log("------------------------");
         TryBet(decision);
     }
 

@@ -6,7 +6,7 @@ public class BadAI : AIClass
         Caution = 0.5f;
         Stupidity = 1f;
         Randomness = 0.6f;
-        RaiseThreshold = 1.8f;
-        CallThreshold = 1.5f;
+        RaiseThreshold = 2f;
+        CallThreshold = 1.1f;
     }
 }
