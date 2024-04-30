@@ -11,6 +11,7 @@ public class AIClass : Player
     public float Randomness; //rastgele icin
     public float RaiseThreshold; // threshold for raise
     public float CallThreshold; // threshold for raise
+    private PokerHand _bestHand;
     public void AIMakeDecision()
     {
         if (Table.Instance.GetCards().Count < 3)
@@ -38,12 +39,12 @@ public class AIClass : Player
             return;
         }
 
-        PokerHand bestHand = combinations //tüm kombinasyonlar
+        _bestHand = combinations //tüm kombinasyonlar
             .Select(hand => PokerHandEvaluator.Instance.EvaluateHand(hand)) //handi alır degerlendirir
             .Aggregate((highest, next) => next > highest ? next : highest); //birlesitrme // en yüksek olani dondur
 
         float rand = Random.Range(0.5f, 1.5f);
-        float decision = Aggression * Mathf.Log(2, (HandCardPoint() + (int)bestHand) / 2f) * Randomness * rand / (Caution + Stupidity);
+        float decision = Aggression * Mathf.Log(2, (HandCardPoint() + (int)_bestHand) / 2f) * Randomness * rand / (Caution + Stupidity);
         TryBet(decision);
     }
 
@@ -73,21 +74,22 @@ public class AIClass : Player
     }
     private void RaiseBet()
     {
+        int raiseValue;
         if (Table.Instance.GetCards().Count < 3)
         {
             float handValue = HandCardPoint() / 3f; //Minimum 4/3, Maximum 28/3 puan
-            int raiseValue = Mathf.CeilToInt(handValue * 10 * Random.Range(0.2f, 1.501f) / 40) * 40;
-
-            if (raiseValue > GetChips())
-                raiseValue = GetChips();
-            if (raiseValue < 40)
-                raiseValue = 40;
-            ActionHelpers.Instance.Raise(this, raiseValue);
+            raiseValue = Mathf.CeilToInt(handValue * 10 * Random.Range(0.2f, 1.501f) / 40) * 40; 
         }
         else
         {
-
+            int pokerHand = (int)_bestHand;
+            raiseValue = Mathf.CeilToInt(pokerHand * 10 * Random.Range(0.2f, 1.501f) / 40) * 40;
         }
+        if (raiseValue > GetChips())
+            raiseValue = GetChips();
+        if (raiseValue < 40)
+            raiseValue = 40;
+        ActionHelpers.Instance.Raise(this, raiseValue);
     }
     private void CallCheckBet()
     {

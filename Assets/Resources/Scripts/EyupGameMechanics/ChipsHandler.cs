@@ -149,8 +149,6 @@ public class ChipsHandler : MonoBehaviour
         }
         return chips[chipCount];
     }
-    //divider = chipin deðeri
-    //divider 100 ise 100lük çip anlamýna geliyor.
     private int CalculateAmount(ref int lastBid, int divider)
     {
         int amount = lastBid / divider;

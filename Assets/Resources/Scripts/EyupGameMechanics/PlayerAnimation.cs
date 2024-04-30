@@ -56,6 +56,14 @@ public class PlayerAnimation : MonoBehaviour
     {
         _animator.SetTrigger("Fold");
         _parent.PlayerCanvasSetActive(false);
+        //eðer çipler bittiyse destroy çaðýr.
+    }
+    private void DestroyCharacter()
+    {
+        //Karakterin çipi biterse çalýþ
+        //DESTROY AND NEW CHARACTER
+        Destroy(gameObject);
+        CreateNextPlayer();
     }
     public void CheckTrigger() {_animator.SetTrigger("Check"); }
     private void AnimationComplete()
