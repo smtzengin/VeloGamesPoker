@@ -11,7 +11,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Image[] _tableCards;
     private byte _handIndex = 0;
     private byte _tableIndex = 0;
-    [SerializeField] private TextMeshProUGUI _tableChipText, _playerChipText;
+    [SerializeField] private TextMeshProUGUI _tableChipText, _raiseText;
     // 0. FOLD, 1. Call, 2. All In One, 3. Raise, 4. Decrease, 5. Increase
     [SerializeField] private Button[] _buttons;
 
@@ -57,14 +57,18 @@ public class UIManager : MonoBehaviour
     //Set call button's text to check or call
     public static void CallCheckText(bool isCheck)
     {
-        instance._buttons[1].transform.GetChild(0).GetComponent<Text>().text = isCheck ? "Check" : "Call";
+        instance._buttons[1].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = isCheck ? "Check" : "Call";
     }
     public static void UpdateTableChipText(int amount)
     {
         instance._tableChipText.text = amount.ToString();
     }
-    public static void UpdatePlayerChips(int amount)
+    public static void UpdateRaiseChipText(int amount)
     {
-        instance._playerChipText.text = amount.ToString();
+        instance._raiseText.text = amount.ToString();
+    }
+    public static void UpdateChipText(TextMeshProUGUI playerChips, int amount)
+    {
+        playerChips.text = amount.ToString();
     }
 }

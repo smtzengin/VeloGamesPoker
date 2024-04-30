@@ -26,10 +26,6 @@ public class AIClass : Player
         float rand = Random.Range(0.5f, 1.5f);
         float decision = Aggression * Mathf.Log((HandCardPoint() + OnePairPoint()) / 2f, 2) * Randomness * rand / (Caution + Stupidity);
 
-        Debug.Log("------------------------");
-        Debug.Log($"Decision = {decision}, log = {Mathf.Log((HandCardPoint() + OnePairPoint()) / 2f, 2)}");
-        Debug.Log("------------------------");
-
         TryBet(decision);
     }
     private void AfterCards()
@@ -48,16 +44,12 @@ public class AIClass : Player
 
         float rand = Random.Range(0.5f, 1.5f);
         float decision = Aggression * Mathf.Log(2, (HandCardPoint() + (int)bestHand) / 2f) * Randomness * rand / (Caution + Stupidity);
-
-        Debug.Log("------------------------");
-        Debug.Log($"BestHand = {(int)bestHand}, decision = {decision}, log = {Mathf.Log(2, (HandCardPoint() + (int)bestHand) / 2f)}");
-        Debug.Log("------------------------");
         TryBet(decision);
     }
 
     private void TryBet(float decision)
     {
-        if (GameLoopManager.Instance.InRoundTour != 3)
+        if (GameLoopManager.Instance.InRoundTour < 3)
             if (decision >= RaiseThreshold)
                 RaiseBet();
             else if (decision >= CallThreshold || GameLoopManager.Instance.InRoundTour == 0)
@@ -81,14 +73,10 @@ public class AIClass : Player
     }
     private void RaiseBet()
     {
-        Debug.Log("RAISED");
-        Debug.Log("--------RAISE VALUES-------");
         if (Table.Instance.GetCards().Count < 3)
         {
             float handValue = HandCardPoint() / 3f; //Minimum 4/3, Maximum 28/3 puan
-            Debug.Log(handValue);
             int raiseValue = Mathf.CeilToInt(handValue * 10 * Random.Range(0.2f, 1.501f) / 40) * 40;
-            Debug.Log(raiseValue);
 
             if (raiseValue > GetChips())
                 raiseValue = GetChips();
@@ -100,16 +88,9 @@ public class AIClass : Player
         {
 
         }
-        Debug.Log("--------------------------");
     }
     private void CallCheckBet()
     {
-        Debug.Log("CALLED/CHECKED");
         ActionHelpers.Instance.Call(this);
-    }
-    private void Fold()
-    {
-        Debug.Log("FOLD");
-        ActionHelpers.Instance.Fold(this);
     }
 }

@@ -47,7 +47,8 @@ public class PlayerAnimation : MonoBehaviour
     }
     private void Sat() { _parent.SetSeatTo(true); }
     private void GetUp() { _parent.SetSeatTo(false); }
-    public void BidTrigger() { Debug.Log("Bidded"); _animator.SetTrigger("Bid"); }
+    public void BidTrigger() {_animator.SetTrigger("Bid"); }
+    public void FoldTrigger() {_animator.SetTrigger("Fold"); }
     private void AnimationComplete()
     {
         GameLoopManager.Instance.OnPlayerAction();

@@ -9,23 +9,23 @@ public class Player : MonoBehaviour
 
     [SerializeField] protected List<CardSO> _hand;
     [SerializeField] private int _chips = 2000;
-    [SerializeField] private int _currentBid;
-    [SerializeField] private int _lastBid;
+    [SerializeField] private int _currentBet = 0;
+    [SerializeField] private int _lastBet;
     [SerializeField] private Transform _dealerTransform;
 
     [SerializeField] private GameObject[] _onHandCards;
     private int _onHandCounter = 0;
     private PlayerAnimation _playerAnimation;
-
     public bool IsLocalPlayer { get { return _localPlayer; } }
     [SerializeField] private bool _localPlayer;
+
+    [SerializeField] private PlayerCanvas _playerCanvas;
 
     private void Awake()
     {
         _hand = new List<CardSO>();
         //geçici olarak 2000 chip atýyoruz hepsine
-        if (_localPlayer)
-            UIManager.UpdatePlayerChips(_chips);
+        UpdateCanvas();
     }
     public void ReceiveCards(CardSO card)
     {
@@ -41,17 +41,19 @@ public class Player : MonoBehaviour
     {
         return _hand;
     }
-    public int GetCurrentBid() { return _currentBid; }
-    public int GetLastBid() { return _lastBid; }
+    public int GetCurrentBid() { return _currentBet; }
+    public int GetLastBid() { return _lastBet; }
     public void AddBid(int amount)
     {
         _playerAnimation.BidTrigger();
-        _lastBid = amount;
-        _currentBid += amount;
+        _lastBet = amount;
+        _currentBet += amount;
         DecreaseChips(amount);
-
-        if(_localPlayer)
-            UIManager.UpdatePlayerChips(_chips);
+        UpdateCanvas();
+    }
+    public void Fold()
+    {
+        _playerAnimation.FoldTrigger();
     }
     public int GetChips() { return _chips; }
     public void DecreaseChips(int amount) { _chips -= amount; }
@@ -71,9 +73,16 @@ public class Player : MonoBehaviour
 
     //For Dealer Button and Chips
     public Transform GetDealerTransform() { return _dealerTransform; }
-    public void ResetBets()
+    public void ResetRoundBets()
     {
-        _currentBid = 0;
-        _lastBid = 0;
+        _lastBet = 0;
+        _currentBet = 0;
+        UpdateCanvas();
+    }
+
+    private void UpdateCanvas()
+    {
+        _playerCanvas.UpdateBet(_currentBet);
+        _playerCanvas.UpdateChips(_chips);
     }
 }
