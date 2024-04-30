@@ -51,6 +51,10 @@ public class Player : MonoBehaviour
         DecreaseChips(amount);
         UpdateCanvas();
     }
+    public void Check()
+    {
+        _playerAnimation.CheckTrigger();
+    }
     public void Fold()
     {
         _playerAnimation.FoldTrigger();
@@ -79,10 +83,10 @@ public class Player : MonoBehaviour
         _currentBet = 0;
         UpdateCanvas();
     }
-
     private void UpdateCanvas()
     {
         _playerCanvas.UpdateBet(_currentBet);
         _playerCanvas.UpdateChips(_chips);
     }
+
 }

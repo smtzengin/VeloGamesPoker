@@ -57,7 +57,7 @@ public class ActionHelpers : MonoBehaviour
     public void Check(Player p)
     {
         Debug.Log($"{p.name} CHECK.");
-        GameLoopManager.Instance.OnPlayerAction();
+        p.Check();
     }
     public void Raise(Player p, int amount)
     {
@@ -83,9 +83,9 @@ public class ActionHelpers : MonoBehaviour
 
         if (p.IsLocalPlayer)
         {
+            CheckChips(p);
             _raiseAmount = 40;
             UIManager.UpdateRaiseChipText(_raiseAmount);
-            CheckChips(p);
         }
         GameLoopManager.Instance.CurrentBid += newBid;
         GameLoopManager.Instance.MinBid += amount;

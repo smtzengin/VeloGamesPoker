@@ -80,7 +80,6 @@ public class GameLoopManager : MonoBehaviour
         {
             if (_currentPlayerIndex >= _currentPlayers.Count) //If last player fold, return.
                 return;
-            Debug.Log(_currentPlayerIndex);
             int lastBid = _currentPlayers[_currentPlayerIndex].GetCurrentBid();
             if (_currentPlayers.TrueForAll((x) => x.GetCurrentBid() == lastBid))
                 UpdateRound();
@@ -261,6 +260,7 @@ public class GameLoopManager : MonoBehaviour
         else
         {
             UIManager.AllButtonsActive(active: false);
+            ActionHelpers.Instance.CheckChips(_currentPlayers[_currentPlayerIndex]);
             _currentPlayers[_currentPlayerIndex].GetComponent<AIClass>().AIMakeDecision();
         }
     }
