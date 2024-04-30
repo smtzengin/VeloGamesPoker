@@ -8,8 +8,6 @@ using System;
 public class DatabaseExamplePanel : MonoBehaviour
 {
 
-
-
     [SerializeField] private TextMeshProUGUI userNicknameText;
     [SerializeField] private TextMeshProUGUI userExpText;
     [SerializeField] private TextMeshProUGUI userLeveltext;

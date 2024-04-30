@@ -46,6 +46,12 @@ public class PokerHandEvaluator : MonoBehaviour
 
         return PokerHand.HighCard; //hic durrum yoksa highcarda göre secim
     }
+    public bool HasPair(List<CardSO> hand)
+    {
+        if (IsPair(hand))
+            return true;
+        return false;
+    }
 
     private bool IsRoyalFlush(List<CardSO> hand) //RF mi ? 10 dan ASa kadar var mı?
     {
@@ -157,15 +163,18 @@ public class PokerHandEvaluator : MonoBehaviour
 
             }
 
-        List<CardSO> lastCombination = new List<CardSO>
+        if (Table.Instance.GetCards().Count == 5)
         {
-            tableCards[0],
-            tableCards[2],
-            tableCards[4],
-            playerHand[0],
-            playerHand[1],
-        };
-        combinations.Add(lastCombination);
+            List<CardSO> lastCombination = new List<CardSO>
+            {
+                tableCards[0],
+                tableCards[2],
+                tableCards[4],
+                playerHand[0],
+                playerHand[1],
+            };
+            combinations.Add(lastCombination);
+        }
 
         return combinations;
     }

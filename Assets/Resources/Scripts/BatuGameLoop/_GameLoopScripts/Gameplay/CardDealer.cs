@@ -9,6 +9,8 @@ public class CardDealer : MonoBehaviour
     [SerializeField] private List<CardSO> _remainingCards;
     [SerializeField] private Transform _cardSpawnPoint;
     [SerializeField] private GameObject _targetCard;
+    [SerializeField] private DealerButton _dealerButton;
+    private int _playerIndex;
     public Animator DealerAnimator { get; private set; }
     private int _cardsGiven = 0;
     private void Awake()
@@ -50,6 +52,10 @@ public class CardDealer : MonoBehaviour
         {
             int randomIndex = Random.Range(0, _remainingCards.Count);
             cardsToTable[i] = _remainingCards[randomIndex];
+
+            TargetCard card = Instantiate(_targetCard, _cardSpawnPoint.position, Quaternion.identity).GetComponent<TargetCard>();
+            card.Setup(Table.Instance.NextCardHolder());
+
             _remainingCards.RemoveAt(randomIndex);
         }
         return cardsToTable;
@@ -60,9 +66,10 @@ public class CardDealer : MonoBehaviour
     }
     private void DealToPlayer()
     {
-        if (_cardsGiven >= GameLoopManager.Instance.GetPlayers().Count * 2)
+        if (_cardsGiven >= GameLoopManager.Instance.GetCurrentPlayers().Count * 2)
         {
             DealerAnimator.SetBool("GiveCard", false);
+            GameLoopManager.Instance.StartRound();
             return;
         }
         _cardsGiven++;
@@ -74,7 +81,13 @@ public class CardDealer : MonoBehaviour
         _remainingCards.RemoveAt(randomIndex);
 
         TargetCard tCard = Instantiate(_targetCard, _cardSpawnPoint.position, Quaternion.identity).GetComponent<TargetCard>();
-        tCard.Setup(p);
+        tCard.Setup(p.transform);
+    }
+    public void GiveDealerButton(int playerIndex)
+    {
+        List<Player> players = GameLoopManager.Instance.GetCurrentPlayers();
+        _dealerButton.SetTarget(players[playerIndex].GetDealerTransform());
+        PlayDealAnimation();
     }
 
 

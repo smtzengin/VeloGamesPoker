@@ -1,13 +1,13 @@
 public enum PokerHand
 {
-    HighCard,
-    Pair,
+    HighCard = 0,
+    Pair = 10,
     TwoPair,
     ThreeOfAKind,
     Straight,
     Flush,
-    FullHouse,
+    FullHouse = 18,
     FourOfAKind,
     StraightFlush,
-    RoyalFlush
+    RoyalFlush // 21
 }

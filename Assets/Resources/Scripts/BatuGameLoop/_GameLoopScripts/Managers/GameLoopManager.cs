@@ -5,7 +5,7 @@ public class GameLoopManager : MonoBehaviour
 {
     public static GameLoopManager Instance { get; private set; }
 
-    [SerializeField] Player[] _allPlayer;
+    [SerializeField] Player[] _allPlayers;
     [SerializeField] List<Player> _currentPlayers;
 
     private int _currentPlayerIndex = 0;
@@ -15,7 +15,11 @@ public class GameLoopManager : MonoBehaviour
 
     [SerializeField] private int _minBid = 20;
     [SerializeField] private int _currentBid;
+    private int _dealerButtonIndex;
+    private bool _littleBid = false, _bigBid = false;
+    private bool _roundDone = false;
 
+    public int InRoundTour = 0;
     public int MinBid
     {
         get { return _minBid; }
@@ -49,27 +53,33 @@ public class GameLoopManager : MonoBehaviour
         //LightManager.Instance.MoveTurnIndicator(_currentPlayers[_currentPlayerIndex].transform.position);
         //ActionHelpers.Instance.FirstBids(20);
         //ActionHelpers.Instance.FirstBids(20);
-        //NOTE: First Player to bid freely is player[2]. player[0] and player[1] bid automatically by the game (20 and 40)
     }
 
     public void OnPlayerAction()
     {
-        Debug.Log($"Player {_currentPlayerIndex + 1} aksiyon aldi {_currentRound} roundunda.");
+        if (_currentPlayers.Count == 1)
+            return; //winner
         _actionCount++;
-        if (_actionCount >= 4)
+
+        if (_actionCount % _currentPlayers.Count == 0)
+            InRoundTour++;
+
+        if (_actionCount >= _currentPlayers.Count)
             CheckBids();
 
-        _currentPlayerIndex = (_currentPlayerIndex + 1) % _currentPlayers.Count;
-
-
+        if (_roundDone) return; //End Game
+        UIManager.UpdateTableChipText(_currentBid);
+        NextPlayer();
+        //Check if it is ai's Turn.
+        CheckTurn();
         LightManager.Instance.MoveTurnIndicator(_currentPlayers[_currentPlayerIndex].transform.position);
-
-        Debug.Log($"Simdi Player {_currentPlayerIndex + 1}' in turu {_currentRound} roundunda.");
     }
     public void CheckBids()
     {
-        if (_currentRound != GameRound.PreFlop || (_currentRound == GameRound.PreFlop && _actionCount > 6))
+        if (_currentRound != GameRound.PreFlop || (_currentRound == GameRound.PreFlop && _actionCount > _currentPlayers.Count + 1))
         {
+            if (_currentPlayerIndex >= _currentPlayers.Count) //If last player fold, return.
+                return;
             int lastBid = _currentPlayers[_currentPlayerIndex].GetCurrentBid();
             if (_currentPlayers.TrueForAll((x) => x.GetCurrentBid() == lastBid))
                 UpdateRound();
@@ -78,55 +88,93 @@ public class GameLoopManager : MonoBehaviour
     public void RemovePlayer(Player p)
     {
         _currentPlayers.Remove(p);
+        _actionCount = 
+            (_actionCount - 1 < 0) ? 0 : _actionCount - 1;
         _currentPlayerIndex--;
     }
-    public List<Player> GetPlayers()
+    public List<Player> GetCurrentPlayers()
     {
         return _currentPlayers;
     }
+    public Player[] GetPlayersInLine()
+    {
+        return _allPlayers;
+    }
     private void UpdateRound()
     {
+        if (_currentRound != GameRound.Showdown)
+        {
+            _actionCount = 0;
+            InRoundTour = 0;
+            ResetRoundBet();
+        }
+        else _roundDone = true;
+
         switch (_currentRound)
         {
             case GameRound.PreFlop:
+                ChipsHandler.Instance.NextGameLoop();
                 _currentRound = GameRound.Flop;
                 break;
             case GameRound.Flop:
+                ChipsHandler.Instance.NextGameLoop();
                 _currentRound = GameRound.Turn;
-                Table.Instance.AckardToTable(3);
                 break;
             case GameRound.Turn:
+                ChipsHandler.Instance.NextGameLoop();
                 _currentRound = GameRound.River;
-                Table.Instance.AckardToTable(1);
                 break;
             case GameRound.River:
+                ChipsHandler.Instance.NextGameLoop();
                 _currentRound = GameRound.Showdown;
-                Table.Instance.AckardToTable(1);
-
                 break;
             case GameRound.Showdown:
                 Debug.Log($"Turlar bitti/ Oyun bitti");
                 SelectBestCombination();
                 break;
         }
-        _actionCount = 0;
+
         Debug.Log($"Round suan {_currentRound}");
     }
-
+    public void Ackard()
+    {
+        if (_currentRound == GameRound.Flop)
+            Table.Instance.AckardToTable(3);
+        if (_currentRound == GameRound.Turn)
+            Table.Instance.AckardToTable(1);
+        if (_currentRound == GameRound.River)
+            Table.Instance.AckardToTable(1);
+    }
     public void SetupLine()
     {
-        _currentPlayers = new List<Player>(_allPlayer);
-        /*
-        int firstToStart = Random.Range(0, _allPlayer.Length);
+        int firstToStart = Random.Range(0, _allPlayers.Length);
         _currentPlayers = new List<Player>();
 
-        for (int i = 0; i < _allPlayer.Length; i++)
-            _currentPlayers.Add(_allPlayer[(firstToStart + i) % _allPlayer.Length]);
-        */
+        for (int i = 0; i < _allPlayers.Length; i++)
+            _currentPlayers.Add(_allPlayers[(firstToStart + i) % _allPlayers.Length]);
+        _dealerButtonIndex = 0;
+        _currentPlayerIndex++;
+    }
+    public void NextDealer()
+    {
+        _dealerButtonIndex++;
+        _currentPlayerIndex = _dealerButtonIndex + 1;
     }
     public Player GetCurrentPlayer()
     {
         return _currentPlayers[_currentPlayerIndex];
+    }
+    public Player GetLastPlayer()
+    {
+        return _currentPlayers[(_currentPlayerIndex + (_currentPlayers.Count - 1)) % _currentPlayers.Count];
+    }
+    private void ResetRoundBet()
+    {
+        _minBid = 0;
+        for (int i = 0; i < _currentPlayers.Count; i++)
+        {
+            _currentPlayers[i].ResetRoundBets();
+        }
     }
     public void SelectBestCombination()
     {
@@ -153,26 +201,22 @@ public class GameLoopManager : MonoBehaviour
                     bestHand = currentHand;
                 }
                 else if (currentHand == bestHand)
-                {
                     if (CompareHands(combination, winnerHand) == 1)
                     {
                         winner = _currentPlayers[i];
                         winnerHand = combination;
                         bestHand = currentHand;
                     }
-                }
 
-                if(currentHand > playersBestHand)
-                {
+                if (currentHand > playersBestHand)
                     playersBestHand = currentHand;
-                }
 
             }
             Debug.Log($"Player {_currentPlayers[i].name}'s Hand: {playersBestHand}");
 
         }
         Debug.Log($"Winner: {winner} Hand: {bestHand}");
-        
+
     }
     private int CompareHands(List<CardSO> hand1, List<CardSO> hand2)
     {
@@ -195,10 +239,50 @@ public class GameLoopManager : MonoBehaviour
     }
     public void DistributeCards()
     {
+        CardDealer.Instance.GiveDealerButton(_dealerButtonIndex);
         CardDealer.Instance.PlayDealAnimation();
     }
     public void NextPlayer()
     {
         _currentPlayerIndex = (_currentPlayerIndex + 1) % _currentPlayers.Count;
+    }
+    void CheckTurn()
+    {
+
+        if (!AreFirstBetsDone())
+            return;
+
+        if (_currentPlayers[_currentPlayerIndex].IsLocalPlayer) //Sýradaki karakter bizim karakter ise
+        {
+            UIManager.AllButtonsActive(active: true);
+            ActionHelpers.Instance.CheckChips(_currentPlayers[_currentPlayerIndex]);
+        }
+        else
+        {
+            UIManager.AllButtonsActive(active: false);
+            ActionHelpers.Instance.CheckChips(_currentPlayers[_currentPlayerIndex]);
+            _currentPlayers[_currentPlayerIndex].GetComponent<AIClass>().AIMakeDecision();
+        }
+    }
+    public void StartRound()
+    {
+        LightManager.Instance.MoveTurnIndicator(_currentPlayers[_currentPlayerIndex].transform.position);
+        CheckTurn();
+    }
+    private bool AreFirstBetsDone()
+    {
+        if (!_littleBid)
+        {
+            ActionHelpers.Instance.Raise(_currentPlayers[_currentPlayerIndex], 20);
+            _littleBid = true;
+            return false;
+        }
+        else if (!_bigBid)
+        {
+            ActionHelpers.Instance.Raise(_currentPlayers[_currentPlayerIndex], 20);
+            _bigBid = true;
+            return false;
+        }
+        return true;
     }
 }

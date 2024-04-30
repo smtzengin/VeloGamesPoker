@@ -45,6 +45,33 @@ public class PlayerAnimation : MonoBehaviour
     {
         GameLoopManager.Instance.TryToStart();
     }
-    private void Sat() { _parent.SetSeatTo(true); }
+    private void Sat() 
+    { 
+        _parent.SetSeatTo(true); 
+        _parent.PlayerCanvasSetActive(true);
+    }
     private void GetUp() { _parent.SetSeatTo(false); }
+    public void BidTrigger() {_animator.SetTrigger("Bid"); }
+    public void FoldTrigger() 
+    {
+        _animator.SetTrigger("Fold");
+        _parent.PlayerCanvasSetActive(false);
+        //eðer çipler bittiyse destroy çaðýr.
+    }
+    private void DestroyCharacter()
+    {
+        //Karakterin çipi biterse çalýþ
+        //DESTROY AND NEW CHARACTER
+        Destroy(gameObject);
+        CreateNextPlayer();
+    }
+    public void CheckTrigger() {_animator.SetTrigger("Check"); }
+    private void AnimationComplete()
+    {
+        GameLoopManager.Instance.OnPlayerAction();
+    }
+    private void PassBids()
+    {
+        GameManager.Instance.SendBids(_parent);
+    }
 }
