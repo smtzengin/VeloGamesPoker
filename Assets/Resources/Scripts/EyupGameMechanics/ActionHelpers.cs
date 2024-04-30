@@ -8,73 +8,93 @@ public class ActionHelpers : MonoBehaviour
     public static ActionHelpers Instance;
 
     [SerializeField] private Button _fold, _call, _raise, _allInOne, _increaseBid, _decreaseBid;
-    private Button[] _buttons;
     private Player _player;
-    [SerializeField] private Text _raiseText;
-    private int _raiseAmount;
+    private int _raiseAmount = 40;
+    private bool _isCheck = false;
     private void Awake()
     {
         Instance = this;
-        SetButtonList();
-    }
-    private void SetButtonList()
-    {
-        _buttons = new Button[]{ _fold, _call, _raise, _allInOne, _increaseBid, _decreaseBid };
     }
     public void SetButtonsPlayer(Player p)
     {
         _player = p;
-        _fold.onClick.AddListener(delegate { Fold(_player); });
-        _call.onClick.AddListener(delegate { Call(_player); });
-        _raise.onClick.AddListener(delegate { Raise(_player, _raiseAmount); });
-        _increaseBid.onClick.AddListener(delegate { IncreaseBid(); });
-        _decreaseBid.onClick.AddListener(delegate { DecreaseBid(); });
+        _fold.onClick.AddListener(delegate { Fold(_player); Choosed(); });
+        _call.onClick.AddListener(delegate { Call(_player); Choosed(); });
+        _raise.onClick.AddListener(delegate { Raise(_player, _raiseAmount); Choosed(); });
+        _increaseBid.onClick.AddListener(delegate { IncreaseBid();});
+        _decreaseBid.onClick.AddListener(delegate { DecreaseBid();});
     }
-    public void Fold(Player player)
+    private void Choosed()
     {
-        GameLoopManager.Instance.RemovePlayer(player);
+        UIManager.AllButtonsActive(false);
     }
-    public void Call(Player player)
+    public void Fold(Player p)
     {
+        Debug.Log($"{p.name} FOLD.");
+        GameLoopManager.Instance.RemovePlayer(p);
+        p.Fold();
+    }
+    public void Call(Player p)
+    {
+        if (_isCheck)
+        {
+            Check(p);
+            return;
+        }
+        Debug.Log($"{p.name} CALL.");
         int amount = 0;
-        
-        if (player.GetCurrentBid() < GameLoopManager.Instance.MinBid) //Player'ýn son bahsi bir önceki oyuncudan düþükse
-            amount = GameLoopManager.Instance.MinBid - player.GetCurrentBid(); //aradaki farký miktara ekle
 
-        if (player.GetChips() < amount) //Player'ýn yeteri kadar chipi yoksa bu seçeneði engelle!
+        if (p.GetCurrentBid() < GameLoopManager.Instance.MinBid) //Player'ýn son bahsi bir önceki oyuncudan düþükse
+            amount = GameLoopManager.Instance.MinBid - p.GetCurrentBid(); //aradaki farký miktara ekle
+
+        if (p.GetChips() < amount) //Player'ýn yeteri kadar chipi yoksa bu seçeneði engelle!
             return;
 
-        if(amount == 0) //eðer oyuncunun o anki bahsi minbid ile eþit ise -> Skip
-        {
-        }
-
-        player.AddBid(amount); //Player'ýn son bahsini yükselt
+        p.AddBid(amount); //Player'ýn son bahsini yükselt
 
         GameLoopManager.Instance.CurrentBid += amount; //Oyundaki toplam bahsi yükselt.
     }
-    public void Raise(Player player, int amount)
+    public void Check(Player p)
     {
+        Debug.Log($"{p.name} CHECK.");
+        p.Check();
+    }
+    public void Raise(Player p, int amount)
+    {
+        Debug.Log($"{p.name} RAISE {amount}.");
         int newBid = 0;
 
-        if (player.GetChips() <= 0 || amount <= 0) 
+        if (p.GetChips() == 0 || amount <= 0)
         {
             Debug.Log("Not enough chips to raise.");
             return;
         }
 
-        if (player.GetChips() < amount) 
-            amount = player.GetChips();
+        if (p.GetChips() < amount)
+            amount = p.GetChips();
 
-        if (player.GetCurrentBid() <= GameLoopManager.Instance.MinBid) 
-            newBid = (GameLoopManager.Instance.MinBid - player.GetCurrentBid()) + amount;
+        if (p.GetCurrentBid() <= GameLoopManager.Instance.MinBid)
+            newBid = (GameLoopManager.Instance.MinBid - p.GetCurrentBid()) + amount;
 
-        Debug.Log("MinBid: " + GameLoopManager.Instance.MinBid + " PlayerBid: " + player.GetCurrentBid());
-        Debug.Log("NewBid: " + newBid);
-        Debug.Log("CurrentBid: " + GameLoopManager.Instance.CurrentBid);
-        player.AddBid(newBid);
+        p.AddBid(newBid);
 
+        if (p.IsLocalPlayer)
+        {
+            CheckChips(p);
+            _raiseAmount = 40;
+            UIManager.UpdateRaiseChipText(_raiseAmount);
+        }
         GameLoopManager.Instance.CurrentBid += newBid;
         GameLoopManager.Instance.MinBid += amount;
+    }
+    private void AICheck(Player p)
+    {
+        if (p.GetChips() + p.GetCurrentBid() < GameLoopManager.Instance.MinBid)
+            _isCheck = true;
+        else if (GameLoopManager.Instance.GetLastPlayer().GetCurrentBid() == p.GetCurrentBid())
+            _isCheck = true;
+        else
+            _isCheck = false;
     }
     public void AllIn(Player player)
     {
@@ -89,21 +109,60 @@ public class ActionHelpers : MonoBehaviour
             return;
 
         _raiseAmount += 40;
-        _raiseText.text = _raiseAmount.ToString();
+        UIManager.UpdateRaiseChipText(_raiseAmount);
+        CheckChips(GameLoopManager.Instance.GetCurrentPlayer());
     }
     public void DecreaseBid()
     {
-        if(_raiseAmount != 40)
+        if (_raiseAmount != 40)
         {
             _raiseAmount -= 40;
-            _raiseText.text = _raiseAmount.ToString();
+            UIManager.UpdateRaiseChipText(_raiseAmount);
         }
+
+        CheckChips(GameLoopManager.Instance.GetCurrentPlayer());
     }
 
-    public void SetInteraction(bool active)
+    public void CheckChips(Player p)
     {
-        for (int i = 0; i < _buttons.Length; i++)
-            _buttons[i].interactable = active;
-    }
+        if (!p.IsLocalPlayer)
+        {
+            AICheck(p);
+            return;
+        }
 
+        int playerChips = p.GetChips();
+        int playerBet = p.GetCurrentBid();
+        if (playerChips + playerBet < GameLoopManager.Instance.MinBid)
+        {
+            CheckAllow(true);
+            ButtonActive(3, false);
+        }
+        else if (GameLoopManager.Instance.GetLastPlayer().GetCurrentBid() == p.GetCurrentBid())
+            CheckAllow(true);
+        else
+        {
+            CheckAllow(false);
+            ButtonActive(3, true);
+        }
+        if (playerChips < _raiseAmount + 40)
+            ButtonActive(5, false);
+        else
+            ButtonActive(5, true);
+
+        if (_raiseAmount - 40 == 0)
+            ButtonActive(4, false);
+        else
+            ButtonActive(4, true);
+
+    }
+    private void CheckAllow(bool isCheck)
+    {
+        _isCheck = isCheck;
+        UIManager.CallCheckText(isCheck);
+    }
+    private void ButtonActive(int line, bool active)
+    {
+        UIManager.ButtonActive(line, active);
+    }
 }

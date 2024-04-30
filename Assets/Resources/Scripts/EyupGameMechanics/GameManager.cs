@@ -46,13 +46,5 @@ public class GameManager : MonoBehaviour
     {
         GameObject chips = ChipsHandler.Instance.BidChips(p);
     }
-    //public void CheckAllPlayer()
-    //{
-    //    for (int i = 0; i < _playerScripts.Length; i++)
-    //        if (!_playerScripts[i].IsFull)
-    //            return;
-
-    //    //StartGame
-    //}
 
 }
