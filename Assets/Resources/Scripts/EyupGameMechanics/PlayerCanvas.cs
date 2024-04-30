@@ -18,5 +18,4 @@ public class PlayerCanvas : MonoBehaviour
     {
         UIManager.UpdateChipText(_chips,amount);
     }
-
 }

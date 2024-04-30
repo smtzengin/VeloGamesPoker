@@ -45,10 +45,18 @@ public class PlayerAnimation : MonoBehaviour
     {
         GameLoopManager.Instance.TryToStart();
     }
-    private void Sat() { _parent.SetSeatTo(true); }
+    private void Sat() 
+    { 
+        _parent.SetSeatTo(true); 
+        _parent.PlayerCanvasSetActive(true);
+    }
     private void GetUp() { _parent.SetSeatTo(false); }
     public void BidTrigger() {_animator.SetTrigger("Bid"); }
-    public void FoldTrigger() {_animator.SetTrigger("Fold"); }
+    public void FoldTrigger() 
+    {
+        _animator.SetTrigger("Fold");
+        _parent.PlayerCanvasSetActive(false);
+    }
     public void CheckTrigger() {_animator.SetTrigger("Check"); }
     private void AnimationComplete()
     {

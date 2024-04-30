@@ -88,5 +88,9 @@ public class Player : MonoBehaviour
         _playerCanvas.UpdateBet(_currentBet);
         _playerCanvas.UpdateChips(_chips);
     }
+    public void PlayerCanvasSetActive(bool active)
+    {
+        _playerCanvas.gameObject.SetActive(active);
+    }
 
 }
