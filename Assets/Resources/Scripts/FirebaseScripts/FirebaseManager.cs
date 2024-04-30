@@ -171,7 +171,7 @@ public class FirebaseManager : MonoBehaviour
             AuthResult result = loginTask.Result;
             Debug.LogFormat("User signed in succesfully : {0} {1}", result.User.DisplayName, result.User.UserId);       
             MainCanvas.instance.LoginPanel.SetActive(false);
-            MainCanvas.instance.DatabaseExamplePanel.SetActive(true);
+            MainCanvas.instance.MainMenuPanel.SetActive(true);
 
 
         }
@@ -198,8 +198,9 @@ public class FirebaseManager : MonoBehaviour
         {
             Debug.Log("giriş yapıldı");
             MainCanvas.instance.LoginPanel.SetActive(false);
-            MainCanvas.instance.DatabaseExamplePanel.SetActive(true);
+            MainCanvas.instance.MainMenuPanel.SetActive(true);
         }
+
         else
         {
             Debug.Log("giriş yapılamadı");

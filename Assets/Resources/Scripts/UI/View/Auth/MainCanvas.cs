@@ -9,6 +9,7 @@ public class MainCanvas : MonoBehaviour
     public GameObject LoginPanel;
     public GameObject RegisterPanel;
     public GameObject DatabaseExamplePanel;
+    public GameObject MainMenuPanel;
 
     private void Awake()
     {
