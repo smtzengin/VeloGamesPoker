@@ -35,7 +35,7 @@ public class ChipsHandler : MonoBehaviour
 
         //Daha önceden betchips oluþturulmamýþ ise yeni oluþtur 
         if (!_playerBetChips.ContainsKey(p))
-            CreateBetChip(p);
+            CreateChipHolder(p);
         _playerBetChips[p].transform.position = p.GetDealerTransform().position;
 
         //Yeni transform oluþtur (Pozisyonu hareket ettirmek için) ve chipi yerine koy
@@ -138,7 +138,7 @@ public class ChipsHandler : MonoBehaviour
     //Chip object poolingten aktif olmayaný çek.
     private Transform GetChip(List<Transform> chips)
     {
-        Transform chip = chips.Find((x) => x.gameObject.activeSelf);
+        Transform chip = chips.Find((x) => !x.gameObject.activeSelf);
         
         return chip != null ? chip : AddNewChips(chips);
     }
@@ -155,7 +155,7 @@ public class ChipsHandler : MonoBehaviour
             newHeight += 0.02f;
         return newHeight;
     }
-    private void CreateBetChip(Player p)
+    private void CreateChipHolder(Player p)
     {
         _playerBetChips.Add(p, new GameObject
         {
