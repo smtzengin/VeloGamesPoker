@@ -80,29 +80,7 @@ public class ChipsHandler : MonoBehaviour
         }
         if (reached)
         {
-            for (int i = 0; i < _playerBetChips.Count; i++)
-            {
-                Player p = GameLoopManager.Instance.GetPlayersInLine()[i];
-                for (int j = 0; j < 3; j++)
-                {
-                    Transform betPoint = _playerBetChips[p].transform.GetChild(j);
-                    if (betPoint.childCount > 0)
-                    {
-                        Transform[] chips = betPoint.GetComponentsInChildren<Transform>();
-                        foreach (Transform chip in chips)
-                        {
-                            if (chip != betPoint)
-                            {
-                                chip.SetParent(null);
-                                chip.gameObject.SetActive(false);
-                            }
-                        }
-                    }
-
-                }
-                _playerBetChips[p].transform.position = p.GetDealerTransform().position;
-            }
-
+            ClearChips();
             _moveToMiddle = false;
             GameLoopManager.Instance.Ackard();
         }
@@ -197,5 +175,34 @@ public class ChipsHandler : MonoBehaviour
         bet100.name = "100s";
         bet100.transform.SetParent(_playerBetChips[p].transform);
         bet100.transform.localPosition = Vector3.zero + (p.transform.right * 0.1f);
+    }
+    private void ClearChips()
+    {
+        for (int i = 0; i < _playerBetChips.Count; i++)
+        {
+            Player p = GameLoopManager.Instance.GetPlayersInLine()[i];
+            for (int j = 0; j < 3; j++)
+            {
+                Transform betPoint = _playerBetChips[p].transform.GetChild(j);
+                if (betPoint.childCount > 0)
+                {
+                    Transform[] chips = betPoint.GetComponentsInChildren<Transform>();
+                    foreach (Transform chip in chips)
+                    {
+                        if (chip != betPoint)
+                        {
+                            chip.SetParent(null);
+                            chip.gameObject.SetActive(false);
+                        }
+                    }
+                }
+
+            }
+            _playerBetChips[p].transform.position = p.GetDealerTransform().position;
+        }
+    }
+    public void ResetGame()
+    {
+        ClearChips();
     }
 }

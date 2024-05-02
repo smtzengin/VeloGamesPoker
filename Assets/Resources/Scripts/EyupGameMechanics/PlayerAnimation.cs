@@ -49,6 +49,8 @@ public class PlayerAnimation : MonoBehaviour
     {
         _parent.SetSeatTo(true);
         _parent.PlayerCanvasSetActive(true);
+        transform.position = _parent.transform.position;
+        transform.rotation = _parent.transform.rotation;
     }
     public void BidTrigger() { _animator.SetTrigger("Bid"); }
     public void FoldTrigger()
@@ -62,17 +64,17 @@ public class PlayerAnimation : MonoBehaviour
         _parent.SetSeatTo(false);
         ActionHelpers.Instance.Fold(_parent);
     }
-    private void DestroyCharacter()
+    private void TryToDestroyCharacter()
     {
         if (_parent.GetChips() == 0)
         {
             _parent.SetCharacter(null);
             if (_parent.IsLocalPlayer)
             {
-                //LosePanel!
+                UIManager.ToggleEndPanel(false);
                 return;
             }
-            Destroy(gameObject, 2f);
+            Destroy(gameObject, 3f);
         }
         else
             Fold();

@@ -97,5 +97,12 @@ public class Player : MonoBehaviour
     {
         _playerCanvas.gameObject.SetActive(active);
     }
+    public void ResetStats()
+    {
+        _currentBet = _lastBet = _onHandCounter = 0;
+        for (int i = 0; i < _onHandCards.Length; i++)
+            _onHandCards[i].SetActive(false);
+        _hand.Clear();
+    }
 
 }

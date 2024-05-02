@@ -78,10 +78,20 @@ public class UIManager : MonoBehaviour
     }
     public static void ResetGame()
     {
+        instance.Reset();
         GameLoopManager.Instance.ResetGame();
+    }
+    private void Reset()
+    {
+        _handIndex = _tableIndex = 0;
+        for (int i = 0; i < _handCards.Length; i++)
+            _handCards[i].enabled = false;
+        for (int i = 0; i < _tableCards.Length; i++)
+            _tableCards[i].enabled = false;
     }
     public static void ToggleEndPanel(bool won)
     {
+        Debug.Log("EndToggle");
         instance._controller.TogglePanel(won);
     }
 }

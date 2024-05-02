@@ -45,14 +45,7 @@ public class AIClass : Player
 
         float rand = Random.Range(0.5f, 1.5f);
         float decision = Aggression * Mathf.Log((HandCardPoint() + (int)_bestHand) / 2f, 2) * Randomness * rand / (Caution + Stupidity);
-        Debug.Log(@$"---------------------------
-{name}'s Stats:
-""---------------------------
-Decision: {decision}
-Rand: {rand}
-HandCardPoint: {HandCardPoint()}
-BestHand: {(int)_bestHand}
-Log: {Mathf.Log((HandCardPoint() + (int)_bestHand) / 2f), 2}");
+
         TryBet(decision);
     }
 

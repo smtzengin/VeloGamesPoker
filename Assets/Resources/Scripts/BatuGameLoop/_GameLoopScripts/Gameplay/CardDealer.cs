@@ -10,7 +10,6 @@ public class CardDealer : MonoBehaviour
     [SerializeField] private Transform _cardSpawnPoint;
     [SerializeField] private GameObject _targetCard;
     [SerializeField] private DealerButton _dealerButton;
-    private int _playerIndex;
     public Animator DealerAnimator { get; private set; }
     private int _cardsGiven = 0;
     private void Awake()
@@ -33,7 +32,6 @@ public class CardDealer : MonoBehaviour
         //DealCardsToPlayers();
 
     }
-
     private void ShuffleCards()      //Fisher-Yates shuffle algoritması
     {
         for (int i = _remainingCards.Count - 1; i > 0; i--)
@@ -83,12 +81,15 @@ public class CardDealer : MonoBehaviour
         TargetCard tCard = Instantiate(_targetCard, _cardSpawnPoint.position, Quaternion.identity).GetComponent<TargetCard>();
         tCard.Setup(p.transform);
     }
-    public void GiveDealerButton(int playerIndex)
+    public void GiveDealerButton(Transform target)
     {
-        List<Player> players = GameLoopManager.Instance.GetCurrentPlayers();
-        _dealerButton.SetTarget(players[playerIndex].GetDealerTransform());
+        _dealerButton.SetTarget(target);
         PlayDealAnimation();
     }
-
+    public void ResetGame()
+    {
+        _cardsGiven = 0;
+        _remainingCards = new List<CardSO>(_cardSOs);
+    }
 
 }

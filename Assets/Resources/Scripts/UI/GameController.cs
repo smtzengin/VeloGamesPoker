@@ -8,8 +8,7 @@ public class GameController : MonoBehaviour
     [SerializeField] private GameObject _winPanel;
     [SerializeField] private GameObject _losePanel;
     [SerializeField] private ParticleSystem _winParticles;
-    [SerializeField] private Button _winCloseButton;
-    [SerializeField] private Button _loseCloseButton;
+    [SerializeField] private Button _winCloseButton, _loseCloseButton, _winContButton, _loseContButton;
     [SerializeField] private float _animationDuration = 0.5f;
     [SerializeField] private Ease _animationEase = Ease.InOutQuad;
 
@@ -22,7 +21,10 @@ public class GameController : MonoBehaviour
 
         // Close butonları için listener ekle
         _winCloseButton.onClick.AddListener(() => { MainMenu(); CloseWinPanel(); });
-        _loseCloseButton.onClick.AddListener(() => HidePanel(_losePanel));
+        _loseCloseButton.onClick.AddListener(() => { MainMenu(); HidePanel(_losePanel); });
+
+        _winContButton.onClick.AddListener(() => { ResetGame(); CloseWinPanel(); });
+        _loseContButton.onClick.AddListener(() => { ResetGame(); HidePanel(_losePanel); });
     }
 
     public void TogglePanel(bool won)
@@ -66,7 +68,7 @@ public class GameController : MonoBehaviour
     }
     private void ResetGame()
     {
-        ResetGame();
+        UIManager.ResetGame();
     }
     private void MainMenu()
     {

@@ -77,6 +77,7 @@ public class ActionHelpers : MonoBehaviour
         if (p.GetCurrentBid() <= GameLoopManager.Instance.MinBid)
             newBid = (GameLoopManager.Instance.MinBid - p.GetCurrentBid()) + amount;
 
+        Debug.Log(GameLoopManager.Instance.MinBid + " VE " +p.GetCurrentBid());
         p.AddBid(newBid);
 
         if (p.IsLocalPlayer)
@@ -128,6 +129,7 @@ public class ActionHelpers : MonoBehaviour
     {
         if (!p.IsLocalPlayer)
         {
+            UIManager.AllButtonsActive(false);
             AICheck(p);
             return;
         }
