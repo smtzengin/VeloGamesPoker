@@ -5,7 +5,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public GameObject Character { get; private set; }
-    public bool IsFull { get; private set; }
+    public bool IsFull { get; private set; } = false;
 
     [SerializeField] protected List<CardSO> _hand;
     [SerializeField] private int _chips = 2000;
@@ -59,6 +59,10 @@ public class Player : MonoBehaviour
     {
         _playerAnimation.FoldTrigger();
     }
+    public void BackToTable()
+    {
+        _playerAnimation.BackToTrigger();
+    }
     public int GetChips() { return _chips; }
     public void DecreaseChips(int amount) { _chips -= amount; }
     public void SetSeatTo(bool b) { IsFull = b; }
@@ -72,7 +76,8 @@ public class Player : MonoBehaviour
     public void SetCharacter(GameObject character)
     {
         Character = character;
-        _playerAnimation = character.GetComponent<PlayerAnimation>();
+        if (Character != null)
+            _playerAnimation = character.GetComponent<PlayerAnimation>();
     }
 
     //For Dealer Button and Chips

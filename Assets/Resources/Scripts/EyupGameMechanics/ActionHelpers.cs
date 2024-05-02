@@ -31,8 +31,9 @@ public class ActionHelpers : MonoBehaviour
     public void Fold(Player p)
     {
         Debug.Log($"{p.name} FOLD.");
+        if (p.IsLocalPlayer)
+            GameLoopManager.Instance.LoseRound();
         GameLoopManager.Instance.RemovePlayer(p);
-        p.Fold();
     }
     public void Call(Player p)
     {

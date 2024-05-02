@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
@@ -70,5 +71,13 @@ public class UIManager : MonoBehaviour
     public static void UpdateChipText(TextMeshProUGUI playerChips, int amount)
     {
         playerChips.text = amount.ToString();
+    }
+    public static void ReturnToMain()
+    {
+        SceneManager.LoadScene(0);
+    }
+    public static void ResetGame()
+    {
+        GameLoopManager.Instance.ResetGame();
     }
 }

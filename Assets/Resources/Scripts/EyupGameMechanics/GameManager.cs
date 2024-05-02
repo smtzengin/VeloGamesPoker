@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
             if (_playerScripts[i].Character != null)
                 continue;
             _playerScripts[i].SetCharacter(CharacterSetup.Instance.CreateCharacter(_playerScripts[i], i));
-            if (i == 1) //Bizim karakter
+            if (_playerScripts[i].IsLocalPlayer) //Bizim karakter
                 ActionHelpers.Instance.SetButtonsPlayer(_playerScripts[i]);
 
             break;

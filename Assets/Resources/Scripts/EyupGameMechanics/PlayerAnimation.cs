@@ -34,38 +34,60 @@ public class PlayerAnimation : MonoBehaviour
         transform.rotation = _parent.transform.rotation;
         _parent.SetVisualCards(_visualCards);
 
-       // _animator.applyRootMotion = true;
+        // _animator.applyRootMotion = true;
 
-    }
-    private void CreateNextPlayer()
-    {
-        GameManager.Instance.CreateNewPlayer();
     }
     private void TryToStart()
     {
         GameLoopManager.Instance.TryToStart();
     }
-    private void Sat() 
-    { 
-        _parent.SetSeatTo(true); 
+    private void Sat()
+    {
+        _parent.SetSeatTo(true);
         _parent.PlayerCanvasSetActive(true);
     }
-    private void GetUp() { _parent.SetSeatTo(false); }
-    public void BidTrigger() {_animator.SetTrigger("Bid"); }
-    public void FoldTrigger() 
+    public void BidTrigger() { _animator.SetTrigger("Bid"); }
+    public void FoldTrigger()
     {
         _animator.SetTrigger("Fold");
         _parent.PlayerCanvasSetActive(false);
         //eðer çipler bittiyse destroy çaðýr.
     }
+    private void Fold()
+    {
+        _parent.SetSeatTo(false);
+        ActionHelpers.Instance.Fold(_parent);
+    }
     private void DestroyCharacter()
     {
-        //Karakterin çipi biterse çalýþ
-        //DESTROY AND NEW CHARACTER
-        Destroy(gameObject);
-        CreateNextPlayer();
+        if (_parent.GetChips() == 0)
+        {
+            _parent.SetCharacter(null);
+            if (_parent.IsLocalPlayer)
+            {
+                //LosePanel!
+                return;
+            }
+            Destroy(gameObject, 2f);
+        }
+        else
+            Fold();
     }
-    public void CheckTrigger() {_animator.SetTrigger("Check"); }
+    public void BackToTrigger()
+    {
+        _animator.SetTrigger("BackToTable");
+    }
+    private void BackToTable()
+    {
+        _parent.SetSeatTo(true);
+        _parent.PlayerCanvasSetActive(true);
+        TryToStart();
+    }
+
+    public void CheckTrigger()
+    {
+        _animator.SetTrigger("Check");
+    }
     private void AnimationComplete()
     {
         GameLoopManager.Instance.OnPlayerAction();

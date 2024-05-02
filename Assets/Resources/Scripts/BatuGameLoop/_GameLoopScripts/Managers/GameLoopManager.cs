@@ -15,9 +15,11 @@ public class GameLoopManager : MonoBehaviour
 
     [SerializeField] private int _minBid = 20;
     [SerializeField] private int _currentBid;
-    private int _dealerButtonIndex;
+    private int _dealerButtonIndex = 0;
     private bool _littleBid = false, _bigBid = false;
     private bool _roundDone = false;
+
+    private int _lastDealer = 200;
 
     public int InRoundTour = 0;
     public int MinBid
@@ -147,18 +149,13 @@ public class GameLoopManager : MonoBehaviour
     }
     public void SetupLine()
     {
-        int firstToStart = Random.Range(0, _allPlayers.Length);
+        _lastDealer = _lastDealer == 200 ? Random.Range(0, _allPlayers.Length) : _lastDealer;
         _currentPlayers = new List<Player>();
 
         for (int i = 0; i < _allPlayers.Length; i++)
-            _currentPlayers.Add(_allPlayers[(firstToStart + i) % _allPlayers.Length]);
-        _dealerButtonIndex = 0;
+            _currentPlayers.Add(_allPlayers[(_lastDealer + i) % _allPlayers.Length]);
         _currentPlayerIndex++;
-    }
-    public void NextDealer()
-    {
-        _dealerButtonIndex++;
-        _currentPlayerIndex = _dealerButtonIndex + 1;
+        _lastDealer = (_lastDealer + 1) % _allPlayers.Length;
     }
     public Player GetCurrentPlayer()
     {
@@ -216,7 +213,10 @@ public class GameLoopManager : MonoBehaviour
 
         }
         Debug.Log($"Winner: {winner} Hand: {bestHand}");
-
+        if (winner.IsLocalPlayer)
+            WinRound();
+        else
+            LoseRound();
     }
     private int CompareHands(List<CardSO> hand1, List<CardSO> hand2)
     {
@@ -235,7 +235,19 @@ public class GameLoopManager : MonoBehaviour
     public void TryToStart()
     {
         if (_currentPlayers.TrueForAll(x => x.IsFull))
+        {
             DistributeCards();
+            return;
+        }
+        CheckPlayers();
+    }
+    private void CheckPlayers()
+    {
+        for (int i = 0; i < _allPlayers.Length; i++)
+        {
+            if (_allPlayers[i].Character == null)
+                GameManager.Instance.CreateNewPlayer();
+        }
     }
     public void DistributeCards()
     {
@@ -252,17 +264,12 @@ public class GameLoopManager : MonoBehaviour
         if (!AreFirstBetsDone())
             return;
 
+        ActionHelpers.Instance.CheckChips(_currentPlayers[_currentPlayerIndex]);
         if (_currentPlayers[_currentPlayerIndex].IsLocalPlayer) //Sýradaki karakter bizim karakter ise
-        {
             UIManager.AllButtonsActive(active: true);
-            ActionHelpers.Instance.CheckChips(_currentPlayers[_currentPlayerIndex]);
-        }
         else
-        {
-            UIManager.AllButtonsActive(active: false);
-            ActionHelpers.Instance.CheckChips(_currentPlayers[_currentPlayerIndex]);
             _currentPlayers[_currentPlayerIndex].GetComponent<AIClass>().AIMakeDecision();
-        }
+
     }
     public void StartRound()
     {
@@ -284,5 +291,26 @@ public class GameLoopManager : MonoBehaviour
             return false;
         }
         return true;
+    }
+    public void ResetGame()
+    {
+        SetupLine();
+        PlayersBackToTable();
+        TryToStart();
+    }
+    public void LoseRound()
+    {
+
+    }
+    public void WinRound()
+    {
+
+    }
+
+    private void PlayersBackToTable()
+    {
+        for (int i = 0; i < _allPlayers.Length; i++)
+            if (_allPlayers[i].Character != null)
+                _allPlayers[i].BackToTable();
     }
 }
