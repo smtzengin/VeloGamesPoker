@@ -82,7 +82,6 @@ public class ActionHelpers : MonoBehaviour
 
         if (p.IsLocalPlayer)
         {
-            CheckChips(p);
             _raiseAmount = 40;
             UIManager.UpdateRaiseChipText(_raiseAmount);
         }

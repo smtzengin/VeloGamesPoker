@@ -181,6 +181,8 @@ public class ChipsHandler : MonoBehaviour
         for (int i = 0; i < _playerBetChips.Count; i++)
         {
             Player p = GameLoopManager.Instance.GetPlayersInLine()[i];
+            if (!_playerBetChips.ContainsKey(p))
+                continue;
             for (int j = 0; j < 3; j++)
             {
                 Transform betPoint = _playerBetChips[p].transform.GetChild(j);

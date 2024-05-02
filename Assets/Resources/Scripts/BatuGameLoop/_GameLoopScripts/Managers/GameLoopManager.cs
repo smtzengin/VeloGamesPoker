@@ -272,12 +272,14 @@ public class GameLoopManager : MonoBehaviour
     {
         if (!_littleBet)
         {
+            UIManager.AllButtonsActive(active: false);
             ActionHelpers.Instance.Raise(_currentPlayers[_currentPlayerIndex], 20);
             _littleBet = true;
             return false;
         }
         else if (!_bigBet)
         {
+            UIManager.AllButtonsActive(active: false);
             ActionHelpers.Instance.Raise(_currentPlayers[_currentPlayerIndex], 20);
             _bigBet = true;
             return false;
