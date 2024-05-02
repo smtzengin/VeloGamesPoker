@@ -15,7 +15,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _tableChipText, _raiseText;
     // 0. FOLD, 1. Call, 2. All In One, 3. Raise, 4. Decrease, 5. Increase
     [SerializeField] private Button[] _buttons;
-
+    [SerializeField] private GameController _controller;
     private void Awake()
     {
         instance = this;
@@ -79,5 +79,9 @@ public class UIManager : MonoBehaviour
     public static void ResetGame()
     {
         GameLoopManager.Instance.ResetGame();
+    }
+    public static void ToggleEndPanel(bool won)
+    {
+        instance._controller.TogglePanel(won);
     }
 }

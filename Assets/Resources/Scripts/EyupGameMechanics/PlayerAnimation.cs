@@ -19,6 +19,10 @@ public class PlayerAnimation : MonoBehaviour
         _animator.SetInteger("Chair", _chairNo);
         _parent = p;
     }
+    private void CreateNextPlayer()
+    {
+        GameManager.Instance.CreateNewPlayer();
+    }
     private void OpenSaloonDoor()
     {
         AnimationHandler.Instance.OpenSaloonDoor();
@@ -39,7 +43,7 @@ public class PlayerAnimation : MonoBehaviour
     }
     private void TryToStart()
     {
-        GameLoopManager.Instance.TryToStart();
+        GameLoopManager.Instance.TryToStart(createNew: false);
     }
     private void Sat()
     {

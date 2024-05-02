@@ -90,7 +90,7 @@ public class GameLoopManager : MonoBehaviour
     public void RemovePlayer(Player p)
     {
         _currentPlayers.Remove(p);
-        _actionCount = 
+        _actionCount =
             (_actionCount - 1 < 0) ? 0 : _actionCount - 1;
         _currentPlayerIndex--;
     }
@@ -213,10 +213,8 @@ public class GameLoopManager : MonoBehaviour
 
         }
         Debug.Log($"Winner: {winner} Hand: {bestHand}");
-        if (winner.IsLocalPlayer)
-            WinRound();
-        else
-            LoseRound();
+
+        UIManager.ToggleEndPanel(won: winner.IsLocalPlayer);
     }
     private int CompareHands(List<CardSO> hand1, List<CardSO> hand2)
     {
@@ -232,22 +230,19 @@ public class GameLoopManager : MonoBehaviour
         }
         return 0; //eller esit durumu
     }
-    public void TryToStart()
+    public void TryToStart(bool createNew)
     {
         if (_currentPlayers.TrueForAll(x => x.IsFull))
         {
             DistributeCards();
             return;
         }
-        CheckPlayers();
+        if (createNew)
+            CheckPlayers();
     }
     private void CheckPlayers()
     {
-        for (int i = 0; i < _allPlayers.Length; i++)
-        {
-            if (_allPlayers[i].Character == null)
-                GameManager.Instance.CreateNewPlayer();
-        }
+        GameManager.Instance.CreateNewPlayer();
     }
     public void DistributeCards()
     {
@@ -296,15 +291,7 @@ public class GameLoopManager : MonoBehaviour
     {
         SetupLine();
         PlayersBackToTable();
-        TryToStart();
-    }
-    public void LoseRound()
-    {
-
-    }
-    public void WinRound()
-    {
-
+        TryToStart(true);
     }
 
     private void PlayersBackToTable()

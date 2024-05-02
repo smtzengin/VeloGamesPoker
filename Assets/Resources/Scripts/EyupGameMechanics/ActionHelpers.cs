@@ -32,7 +32,7 @@ public class ActionHelpers : MonoBehaviour
     {
         Debug.Log($"{p.name} FOLD.");
         if (p.IsLocalPlayer)
-            GameLoopManager.Instance.LoseRound();
+            UIManager.ToggleEndPanel(won: false);
         GameLoopManager.Instance.RemovePlayer(p);
     }
     public void Call(Player p)

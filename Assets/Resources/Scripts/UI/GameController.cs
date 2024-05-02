@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
@@ -20,20 +21,8 @@ public class GameController : MonoBehaviour
         _winParticles.gameObject.SetActive(false);
 
         // Close butonları için listener ekle
-        _winCloseButton.onClick.AddListener(() => CloseWinPanel());
+        _winCloseButton.onClick.AddListener(() => { MainMenu(); CloseWinPanel(); });
         _loseCloseButton.onClick.AddListener(() => HidePanel(_losePanel));
-    }
-
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            TogglePanel(true);
-        }
-        else if (Input.GetKeyDown(KeyCode.L))
-        {
-            TogglePanel(false);
-        }
     }
 
     public void TogglePanel(bool won)
@@ -74,5 +63,13 @@ public class GameController : MonoBehaviour
         HidePanel(_winPanel);
         _winParticles.Stop();
         _winParticles.gameObject.SetActive(false);
+    }
+    private void ResetGame()
+    {
+        ResetGame();
+    }
+    private void MainMenu()
+    {
+        UIManager.ReturnToMain();
     }
 }
