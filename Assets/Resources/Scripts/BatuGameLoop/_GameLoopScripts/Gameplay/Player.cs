@@ -104,6 +104,7 @@ public class Player : MonoBehaviour
         for (int i = 0; i < _onHandCards.Length; i++)
             _onHandCards[i].SetActive(false);
         _hand.Clear();
+        UpdateCanvas();
     }
 
 }

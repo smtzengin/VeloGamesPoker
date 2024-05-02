@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour
     }
     public void SendBids(Player p)
     {
-        GameObject chips = ChipsHandler.Instance.BidChips(p);
+        ChipsHandler.Instance.BidChips(p);
     }
 
 }

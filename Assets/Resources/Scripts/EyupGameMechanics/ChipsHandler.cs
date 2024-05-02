@@ -39,6 +39,7 @@ public class ChipsHandler : MonoBehaviour
         _playerBetChips[p].transform.position = p.GetDealerTransform().position;
 
         //Yeni transform oluþtur (Pozisyonu hareket ettirmek için) ve chipi yerine koy
+        Debug.Log(amount20 + " " + amount40 + " " + amount100);
         Transform chip;
         for (int i = 0; i < amount100; i++)
         {
