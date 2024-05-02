@@ -65,6 +65,7 @@ public class Player : MonoBehaviour
     }
     public int GetChips() { return _chips; }
     public void DecreaseChips(int amount) { _chips -= amount; }
+    public void IncreaseChips(int amount) { _chips += amount; }
     public void SetSeatTo(bool b) { IsFull = b; }
     public void AddVisualCardToHand()
     {

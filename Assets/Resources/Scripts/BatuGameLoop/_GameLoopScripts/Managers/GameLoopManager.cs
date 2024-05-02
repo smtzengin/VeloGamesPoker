@@ -10,6 +10,7 @@ public class GameLoopManager : MonoBehaviour
 
     private int _currentPlayerIndex = 0;
     private int _actionCount = 0;
+    private int _totalBetAmount = 0;
 
     [SerializeField] private GameRound _currentRound;
 
@@ -21,6 +22,17 @@ public class GameLoopManager : MonoBehaviour
     private int _lastDealer = 200;
 
     public int InRoundTour = 0;
+
+    public void AddToTotalBet(int amount)
+    {
+        _totalBetAmount += amount;
+    }
+    public void ResetTotalBet()
+    {
+        _totalBetAmount = 0;
+    }
+    public int TotalBetAmount() {  return _totalBetAmount; }
+
     public int MinBid
     {
         get { return _minBet; }
@@ -211,6 +223,13 @@ public class GameLoopManager : MonoBehaviour
         Debug.Log($"Winner: {winner} Hand: {bestHand}");
 
         UIManager.ToggleEndPanel(won: winner.IsLocalPlayer);
+       
+        if (winner.IsLocalPlayer)
+        {
+            Debug.Log("siz kazandiniz");
+            Debug.Log(_totalBetAmount);
+            winner.IncreaseChips(_totalBetAmount);
+        }
     }
     private int CompareHands(List<CardSO> hand1, List<CardSO> hand2)
     {
@@ -296,6 +315,8 @@ public class GameLoopManager : MonoBehaviour
         ChipsHandler.Instance.ResetGame();
         PlayersBackToTable();
         TryToStart(true);
+        ResetTotalBet();
+
     }
 
     private void PlayersBackToTable()

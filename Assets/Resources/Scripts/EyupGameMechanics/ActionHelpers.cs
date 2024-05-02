@@ -54,6 +54,8 @@ public class ActionHelpers : MonoBehaviour
         p.AddBid(amount); //Player'ýn son bahsini yükselt
 
         GameLoopManager.Instance.CurrentBid += amount; //Oyundaki toplam bahsi yükselt.
+        GameLoopManager.Instance.AddToTotalBet(amount);
+        Debug.Log(GameLoopManager.Instance.TotalBetAmount());
     }
     public void Check(Player p)
     {
@@ -80,6 +82,8 @@ public class ActionHelpers : MonoBehaviour
         Debug.Log(GameLoopManager.Instance.MinBid + " VE " +p.GetCurrentBid());
         p.AddBid(newBid);
 
+        GameLoopManager.Instance.AddToTotalBet(newBid);
+        Debug.Log(GameLoopManager.Instance.TotalBetAmount());
         if (p.IsLocalPlayer)
         {
             _raiseAmount = 40;
@@ -102,6 +106,8 @@ public class ActionHelpers : MonoBehaviour
         int chips = player.GetChips();
         player.AddBid(chips);
         GameLoopManager.Instance.CurrentBid += chips;
+        GameLoopManager.Instance.AddToTotalBet(chips);
+        Debug.Log(GameLoopManager.Instance.TotalBetAmount());
     }
     public void IncreaseBid()
     {
