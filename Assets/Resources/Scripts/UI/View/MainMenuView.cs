@@ -12,7 +12,7 @@ public class MainMenuView : View
     [SerializeField] private TextMeshProUGUI _userLeveltext;
 
     private FirebaseManager _firebaseManager;
-    private LoadingPanel _loadingPanel;
+    private LoadingView _loadingPanel;
 
     public override void Initialize()
     {
@@ -22,7 +22,7 @@ public class MainMenuView : View
     private void Awake()
     {
         _firebaseManager = FindObjectOfType<FirebaseManager>(true);
-        _loadingPanel = FindObjectOfType<LoadingPanel>(true);
+        _loadingPanel = FindObjectOfType<LoadingView>(true);
     }
 
     private void Start()

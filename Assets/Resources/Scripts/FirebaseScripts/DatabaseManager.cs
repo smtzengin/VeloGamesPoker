@@ -22,7 +22,6 @@ public class DatabaseManager : MonoBehaviour
     public event Action<string, int> OnDataChanged;
 
     private FirebaseManager _firebaseManager;
-    private LoadingPanel _loadingPanel;
 
     #region Methods
 
@@ -30,9 +29,6 @@ public class DatabaseManager : MonoBehaviour
     {
         Instance = this;
         _firebaseManager = FindObjectOfType<FirebaseManager>(true);
-        _loadingPanel = FindObjectOfType<LoadingPanel>(true);
-        _loadingPanel.gameObject.SetActive(true);
-
     }
 
     private void Start()

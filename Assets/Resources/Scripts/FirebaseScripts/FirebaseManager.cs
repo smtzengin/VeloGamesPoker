@@ -13,10 +13,10 @@ public class FirebaseManager : MonoBehaviour
 {
 
 
-    public Firebase.Auth.FirebaseAuth auth;
-    public Firebase.Auth.FirebaseUser user;
-    private DatabaseReference userReference;
-    DependencyStatus dependencyStatus = DependencyStatus.UnavailableOther;
+    public FirebaseAuth auth;
+    public FirebaseUser user;
+    private DatabaseReference _userReference;
+    private DependencyStatus _dependencyStatus = DependencyStatus.UnavailableOther;
 
 
     private void Awake()
@@ -29,7 +29,7 @@ public class FirebaseManager : MonoBehaviour
 
     private void InitiliazeFirebase()
     {
-        auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
+        auth = FirebaseAuth.DefaultInstance;
         auth.StateChanged += AuthStateChanged;
         AuthStateChanged(this, null);
         Debug.Log("Auth Başarılı!");
@@ -37,22 +37,23 @@ public class FirebaseManager : MonoBehaviour
 
     private IEnumerator CheckAndFixDependenciesAsync()
     {
-        var dependencyTask = Firebase.FirebaseApp.CheckAndFixDependenciesAsync();
+        var dependencyTask = FirebaseApp.CheckAndFixDependenciesAsync();
         yield return new WaitUntil(() => dependencyTask.IsCompleted);
 
-        dependencyStatus = dependencyTask.Result;
+        _dependencyStatus = dependencyTask.Result;
 
-        if (dependencyStatus == DependencyStatus.Available)
+        if (_dependencyStatus == DependencyStatus.Available)
         {
             InitiliazeFirebase();
             yield return new WaitForEndOfFrame();
             StartCoroutine(CheckForAutoLogin());
-            userReference = FirebaseDatabase.DefaultInstance.GetReference("users");
-            Debug.Log(userReference);
+            _userReference = FirebaseDatabase.DefaultInstance.GetReference("users");
+            Debug.Log(_userReference);
+            ViewManager.Show<LoginView>();
         }
         else
         {
-            Debug.LogError("Could not resolve all Firebase dependencies " + dependencyStatus);
+            Debug.LogError("Could not resolve all Firebase dependencies " + _dependencyStatus);
         }
 
     }
@@ -112,7 +113,7 @@ public class FirebaseManager : MonoBehaviour
         User user = new User(userID, username, 0, 0, 0, 0);
         string json = JsonUtility.ToJson(user);
 
-        userReference.Child(userID).SetRawJsonValueAsync(json)
+        _userReference.Child(userID).SetRawJsonValueAsync(json)
             .ContinueWithOnMainThread(task =>
             {
                 if (task.IsFaulted)
@@ -237,7 +238,7 @@ public class FirebaseManager : MonoBehaviour
 
     public IEnumerator GetUserAllData()
     {
-        var task = userReference.GetValueAsync();
+        var task = _userReference.GetValueAsync();
         yield return new WaitUntil(() => task.IsCompleted);
         if (task.Exception != null)
         {
@@ -260,7 +261,7 @@ public class FirebaseManager : MonoBehaviour
     {
         try
         {
-            DataSnapshot snapshot = await userReference.Child(user.UserId).Child(requestedData).GetValueAsync();
+            DataSnapshot snapshot = await _userReference.Child(user.UserId).Child(requestedData).GetValueAsync();
             return snapshot.Value.ToString();
         }
         catch (Exception ex)
@@ -275,7 +276,7 @@ public class FirebaseManager : MonoBehaviour
     {
         try
         {
-            DataSnapshot snapshot = await userReference.Child(user.UserId).Child(requestedData).GetValueAsync();
+            DataSnapshot snapshot = await _userReference.Child(user.UserId).Child(requestedData).GetValueAsync();
             return int.Parse(snapshot.Value.ToString());
         }
         catch (Exception ex)
@@ -291,7 +292,7 @@ public class FirebaseManager : MonoBehaviour
         {
             [requestedData] = value,
         };
-        userReference.Child(user.UserId).UpdateChildrenAsync(childUpdates);
+        _userReference.Child(user.UserId).UpdateChildrenAsync(childUpdates);
     }
 
 

@@ -6,8 +6,8 @@ public class LevelSystem : MonoBehaviour
     private int _level;
     void Awake()
     {
-        _level = 0; //Get level from database
-        _currentXP = 0; //Get _currentXP from database
+        _level = 0; //SAMET Get level from database
+        _currentXP = 0; //SAMET Get _currentXP from database
 
         _nextXP = 100 + (_level * 50);
     }
@@ -26,7 +26,7 @@ public class LevelSystem : MonoBehaviour
             _nextXP = 100 + (_level * 50);
         }
 
-        //Send CurrentXP and level to the database.
+        //SAMET Send CurrentXP and level to the database.
 
         UpdateCanvas();
     }

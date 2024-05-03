@@ -24,14 +24,14 @@ public class DatabaseExamplePanel : MonoBehaviour
     [SerializeField] private Button logoutButton;
 
     [SerializeField]private FirebaseManager _firebaseManager;
-    private LoadingPanel _loadingPanel;
+    private LoadingView _loadingPanel;
 
     public event Action<string, int> OnDataChanged;
 
     private void Awake()
     {
         _firebaseManager = FindObjectOfType<FirebaseManager>(true);
-        _loadingPanel = FindObjectOfType<LoadingPanel>(true);
+        _loadingPanel = FindObjectOfType<LoadingView>(true);
         logoutButton.onClick.AddListener(Logout);
 
         _loadingPanel.gameObject.SetActive(true);
