@@ -22,8 +22,8 @@ public class GameManager : MonoBehaviour
         {
             if (_playerScripts[i].Character != null)
                 continue;
-            _playerScripts[i].SetCharacter(CharacterSetup.Instance.CreateCharacter(_playerScripts[i], i));
-            if (_playerScripts[i].IsLocalPlayer) //Bizim karakter
+            _playerScripts[i].SetCharacter(CharacterSetup.Instance.CreateCharacter(_playerScripts[i], i, _playerScripts[1]));
+            if (_playerScripts[i].IsLocalPlayer)
                 ActionHelpers.Instance.SetButtonsPlayer(_playerScripts[i]);
 
             break;
@@ -46,5 +46,4 @@ public class GameManager : MonoBehaviour
     {
         ChipsHandler.Instance.BidChips(p);
     }
-
 }

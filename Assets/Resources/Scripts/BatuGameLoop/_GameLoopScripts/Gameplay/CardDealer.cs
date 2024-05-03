@@ -10,6 +10,7 @@ public class CardDealer : MonoBehaviour
     [SerializeField] private Transform _cardSpawnPoint;
     [SerializeField] private GameObject _targetCard;
     [SerializeField] private DealerButton _dealerButton;
+    [SerializeField] private AudioClip _dealSound;
     public Animator DealerAnimator { get; private set; }
     private int _cardsGiven = 0;
     private void Awake()
@@ -48,6 +49,7 @@ public class CardDealer : MonoBehaviour
         CardSO[] cardsToTable = new CardSO[count];
         for (int i = 0; i < count; i++)
         {
+            AudioManager.PlayAudio(_dealSound);
             int randomIndex = Random.Range(0, _remainingCards.Count);
             cardsToTable[i] = _remainingCards[randomIndex];
 
@@ -70,6 +72,7 @@ public class CardDealer : MonoBehaviour
             GameLoopManager.Instance.StartRound();
             return;
         }
+        AudioManager.PlayAudio(_dealSound);
         _cardsGiven++;
         Player p = GameLoopManager.Instance.GetCurrentPlayer();
         GameLoopManager.Instance.NextPlayer();

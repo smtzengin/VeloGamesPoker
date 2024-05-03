@@ -10,9 +10,10 @@ public class UIManager : MonoBehaviour
     private static UIManager instance;
     [SerializeField] private Image[] _handCards;
     [SerializeField] private Image[] _tableCards;
+    [SerializeField] private Image _levelFill;
     private byte _handIndex = 0;
     private byte _tableIndex = 0;
-    [SerializeField] private TextMeshProUGUI _tableChipText, _raiseText;
+    [SerializeField] private TextMeshProUGUI _tableChipText, _raiseText, _levelText;
     // 0. FOLD, 1. Call, 2. All In One, 3. Raise, 4. Decrease, 5. Increase
     [SerializeField] private Button[] _buttons;
     [SerializeField] private GameController _controller;
@@ -49,7 +50,7 @@ public class UIManager : MonoBehaviour
     {
         for (int i = 0; i < _buttons.Length; i++)
             _buttons[i].interactable = active;
-    }    
+    }
     //Set one buton to active or not.
     public static void ButtonActive(int line, bool allow)
     {
@@ -72,6 +73,17 @@ public class UIManager : MonoBehaviour
     {
         playerChips.text = amount.ToString();
     }
+    public static void UpdateLevel(int level, float nextXP, float currentXP)
+    {
+        instance.UpdateLevelStats(level, nextXP, currentXP);
+    }
+    private void UpdateLevelStats(int level, float nextXP, float currentXP)
+    {
+        float fill = Mathf.InverseLerp(0f, nextXP, currentXP);
+        _levelFill.fillAmount = fill;
+        _levelText.text = level.ToString();
+    }
+
     public static void ReturnToMain()
     {
         SceneManager.LoadScene(0);

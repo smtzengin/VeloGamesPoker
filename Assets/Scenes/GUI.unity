@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641275, b: 0.5748171, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -9256,6 +9256,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1937036228}
   - component: {fileID: 1937036227}
+  - component: {fileID: 1937036229}
   m_Layer: 0
   m_Name: BGM
   m_TagString: Untagged
@@ -9273,7 +9274,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -681690629432946840, guid: 03d73a6e8dea4214db8877200b1643ee, type: 2}
-  m_audioClip: {fileID: 8300000, guid: e2471455e27ff874d92b5ee6c2ad353b, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 7e41a4642e22574489b170d1a7d2b965, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -9374,6 +9375,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1937036229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1937036226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20253c1d1d13b6d4488d0ef6991a0217, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _clips:
+  - {fileID: 8300000, guid: 7e41a4642e22574489b170d1a7d2b965, type: 3}
+  - {fileID: 8300000, guid: 01dd0b6020236a9459d0bc5276b7d753, type: 3}
+  - {fileID: 8300000, guid: 7871388b21f6ad642b039cbcfe7f6b29, type: 3}
+  - {fileID: 8300000, guid: 3a0a65906dfce1d4cb902bd106726210, type: 3}
+  - {fileID: 8300000, guid: 791725029e5051e4a89bbc46aa17ed39, type: 3}
 --- !u!1 &1971769179
 GameObject:
   m_ObjectHideFlags: 0

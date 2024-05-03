@@ -7,14 +7,10 @@ public class GameLoopManager : MonoBehaviour
 
     [SerializeField] Player[] _allPlayers;
     [SerializeField] List<Player> _currentPlayers;
-
-    private int _currentPlayerIndex = 0;
-    private int _actionCount = 0;
+    LevelSystem _levelSystem;
+    private int _currentPlayerIndex = 0, _actionCount = 0;
 
     [SerializeField] private GameRound _currentRound;
-
-    [SerializeField] private int _minBet = 0;
-    [SerializeField] private int _currentBet;
     private bool _littleBet = false, _bigBet = false;
     private bool _roundDone = false;
 
@@ -22,20 +18,9 @@ public class GameLoopManager : MonoBehaviour
 
     public int InRoundTour = 0;
 
-
-    public int MinBid
-    {
-        get { return _minBet; }
-        set { _minBet = value; }
-    }
-    public int CurrentBid
-    {
-        get { return _currentBet; }
-        set
-        {
-            _currentBet = value;
-        }
-    }
+    [SerializeField] AudioClip _playerTurnSfx, _actionSfx, _wonSfx, _loseSfx;
+    public int MinBet { get; set; }
+    public int CurrentBet { get; set; }
 
     private void Awake()
     {
@@ -43,12 +28,13 @@ public class GameLoopManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            _levelSystem = GetComponent<LevelSystem>();
+            SetupLine();
         }
         else
         {
             Destroy(gameObject);
         }
-        SetupLine();
     }
     public void OnPlayerAction()
     {
@@ -66,11 +52,12 @@ public class GameLoopManager : MonoBehaviour
             CheckBids();
 
         if (_roundDone) return; //End Game
-        UIManager.UpdateTableChipText(_currentBet);
+        UIManager.UpdateTableChipText(CurrentBet);
         NextPlayer();
         //Check if it is ai's Turn.
         CheckTurn();
         LightManager.Instance.MoveTurnIndicator(_currentPlayers[_currentPlayerIndex].transform.position);
+        AudioManager.PlayAudio(GetCurrentPlayer().IsLocalPlayer ? _playerTurnSfx : _actionSfx);
     }
     public void CheckBids()
     {
@@ -165,7 +152,7 @@ public class GameLoopManager : MonoBehaviour
     }
     private void ResetRoundBet()
     {
-        _minBet = 0;
+        MinBet = 0;
         for (int i = 0; i < _currentPlayers.Count; i++)
         {
             _currentPlayers[i].ResetRoundBets();
@@ -186,6 +173,7 @@ public class GameLoopManager : MonoBehaviour
                 PokerHand currentHand = PokerHandEvaluator.Instance.EvaluateHand(combination); // Her bir kombinasyonu deðerlendir
                 if (winnerHand == null)
                 {
+                    winner = _currentPlayers[i];
                     bestHand = currentHand;
                     winnerHand = combination;
                 }
@@ -212,9 +200,18 @@ public class GameLoopManager : MonoBehaviour
         }
         Debug.Log($"Winner: {winner} Hand: {bestHand}");
 
-        UIManager.ToggleEndPanel(won: winner.IsLocalPlayer);
-
-        winner.IncreaseChips(_currentBet);
+        if (winner.IsLocalPlayer)
+        {
+            UIManager.ToggleEndPanel(won: true);
+            AudioManager.PlayAudio(_wonSfx);
+            _levelSystem.GainXP(CurrentBet);
+        }
+        else
+        {
+            UIManager.ToggleEndPanel(won: false);
+            AudioManager.PlayAudio(_loseSfx);
+        }
+        winner.IncreaseChips(CurrentBet);
     }
     private int CompareHands(List<CardSO> hand1, List<CardSO> hand2)
     {
@@ -292,7 +289,7 @@ public class GameLoopManager : MonoBehaviour
     }
     public void ResetGame()
     {
-        _currentPlayerIndex = _actionCount = _currentBet = InRoundTour = _minBet = 0;
+        _currentPlayerIndex = _actionCount = CurrentBet = InRoundTour = MinBet = 0;
         SetupLine();
         _littleBet = _bigBet = _roundDone = false;
         Table.Instance.ResetGame();

@@ -8,6 +8,7 @@ public class ActionHelpers : MonoBehaviour
     public static ActionHelpers Instance;
 
     [SerializeField] private Button _fold, _call, _raise, _allInOne, _increaseBid, _decreaseBid;
+    [SerializeField] private AudioClip _betSfx, _foldSfx;
     private Player _player;
     private int _raiseAmount = 40;
     private bool _isCheck = false;
@@ -30,6 +31,7 @@ public class ActionHelpers : MonoBehaviour
     }
     public void Fold(Player p)
     {
+        AudioManager.PlayAudio(_foldSfx);
         Debug.Log($"{p.name} FOLD.");
         if (p.IsLocalPlayer)
             UIManager.ToggleEndPanel(won: false);
@@ -37,6 +39,7 @@ public class ActionHelpers : MonoBehaviour
     }
     public void Call(Player p)
     {
+        AudioManager.PlayAudio(_betSfx);
         if (_isCheck)
         {
             Check(p);
@@ -45,15 +48,15 @@ public class ActionHelpers : MonoBehaviour
         Debug.Log($"{p.name} CALL.");
         int amount = 0;
 
-        if (p.GetCurrentBid() < GameLoopManager.Instance.MinBid) //Player'ýn son bahsi bir önceki oyuncudan düþükse
-            amount = GameLoopManager.Instance.MinBid - p.GetCurrentBid(); //aradaki farký miktara ekle
+        if (p.GetCurrentBid() < GameLoopManager.Instance.MinBet) //Player'ýn son bahsi bir önceki oyuncudan düþükse
+            amount = GameLoopManager.Instance.MinBet - p.GetCurrentBid(); //aradaki farký miktara ekle
 
         if (p.GetChips() < amount) //Player'ýn yeteri kadar chipi yoksa bu seçeneði engelle!
             return;
 
         p.AddBid(amount); //Player'ýn son bahsini yükselt
 
-        GameLoopManager.Instance.CurrentBid += amount; //Oyundaki toplam bahsi yükselt.
+        GameLoopManager.Instance.CurrentBet += amount; //Oyundaki toplam bahsi yükselt.
     }
     public void Check(Player p)
     {
@@ -62,6 +65,8 @@ public class ActionHelpers : MonoBehaviour
     }
     public void Raise(Player p, int amount)
     {
+        AudioManager.PlayAudio(_betSfx);
+
         Debug.Log($"{p.name} RAISE {amount}.");
         int newBid = 0;
 
@@ -74,10 +79,10 @@ public class ActionHelpers : MonoBehaviour
         if (p.GetChips() < amount)
             amount = p.GetChips();
 
-        if (p.GetCurrentBid() <= GameLoopManager.Instance.MinBid)
-            newBid = (GameLoopManager.Instance.MinBid - p.GetCurrentBid()) + amount;
+        if (p.GetCurrentBid() <= GameLoopManager.Instance.MinBet)
+            newBid = (GameLoopManager.Instance.MinBet - p.GetCurrentBid()) + amount;
 
-        Debug.Log(GameLoopManager.Instance.MinBid + " VE " +p.GetCurrentBid());
+        Debug.Log(GameLoopManager.Instance.MinBet + " VE " +p.GetCurrentBid());
         p.AddBid(newBid);
 
         if (p.IsLocalPlayer)
@@ -85,12 +90,12 @@ public class ActionHelpers : MonoBehaviour
             _raiseAmount = 40;
             UIManager.UpdateRaiseChipText(_raiseAmount);
         }
-        GameLoopManager.Instance.CurrentBid += newBid;
-        GameLoopManager.Instance.MinBid += amount;
+        GameLoopManager.Instance.CurrentBet += newBid;
+        GameLoopManager.Instance.MinBet += amount;
     }
     private void AICheck(Player p)
     {
-        if (p.GetChips() + p.GetCurrentBid() < GameLoopManager.Instance.MinBid)
+        if (p.GetChips() + p.GetCurrentBid() < GameLoopManager.Instance.MinBet)
             _isCheck = true;
         else if (GameLoopManager.Instance.GetLastPlayer().GetCurrentBid() == p.GetCurrentBid())
             _isCheck = true;
@@ -99,9 +104,10 @@ public class ActionHelpers : MonoBehaviour
     }
     public void AllIn(Player player)
     {
+        AudioManager.PlayAudio(_betSfx);
         int chips = player.GetChips();
         player.AddBid(chips);
-        GameLoopManager.Instance.CurrentBid += chips;
+        GameLoopManager.Instance.CurrentBet += chips;
     }
     public void IncreaseBid()
     {
@@ -135,7 +141,7 @@ public class ActionHelpers : MonoBehaviour
 
         int playerChips = p.GetChips();
         int playerBet = p.GetCurrentBid();
-        if (playerChips + playerBet < GameLoopManager.Instance.MinBid)
+        if (playerChips + playerBet < GameLoopManager.Instance.MinBet)
         {
             CheckAllow(true);
             ButtonActive(3, false);

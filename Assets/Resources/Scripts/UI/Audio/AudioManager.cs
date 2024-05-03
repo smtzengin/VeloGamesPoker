@@ -39,7 +39,8 @@ public class AudioManager : MonoBehaviour
         }
 
         for (int i = 0; i < _sliders.Length; i++)
-            _sliders[i].Initialize();
+            if (_sliders[i] != null)
+                _sliders[i].Initialize();
 
 
     }
