@@ -8,25 +8,22 @@ using TMPro;
 using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
+using Resources.Scripts.Utility;
+using UnityEngine.SceneManagement;
 
 public class FirebaseManager : MonoBehaviour
 {
-
-
+    public static FirebaseManager Instance => Singleton<FirebaseManager>.Instance;
     public FirebaseAuth auth;
     public FirebaseUser user;
     private DatabaseReference _userReference;
     private DependencyStatus _dependencyStatus = DependencyStatus.UnavailableOther;
 
-
+    public DatabaseReference UserReference { get => _userReference; private set => _userReference = value; }
     private void Awake()
     {
         StartCoroutine(CheckAndFixDependenciesAsync());
-        
-       
     }
-
-
     private void InitiliazeFirebase()
     {
         auth = FirebaseAuth.DefaultInstance;
@@ -48,7 +45,7 @@ public class FirebaseManager : MonoBehaviour
             yield return new WaitForEndOfFrame();
             StartCoroutine(CheckForAutoLogin());
             _userReference = FirebaseDatabase.DefaultInstance.GetReference("users");
-            Debug.Log(_userReference);
+            Debug.Log("User Reference : " + _userReference);
             ViewManager.Show<LoginView>();
         }
         else
@@ -101,8 +98,7 @@ public class FirebaseManager : MonoBehaviour
                 Debug.LogFormat("Firebase user created successfully : {0} ({1})",
                     result.User.DisplayName, result.User.UserId);
                 RegisterNewUser(result.User.UserId, username);
-                MainCanvas.instance.RegisterPanel.SetActive(false);
-                MainCanvas.instance.LoginPanel.SetActive(true);
+                ViewManager.Show<LoginView>();
             }
         }
         
@@ -110,7 +106,7 @@ public class FirebaseManager : MonoBehaviour
 
     private void RegisterNewUser(string userID, string username)
     {
-        User user = new User(userID, username, 0, 0, 0, 0);
+        User user = new User(userID, username, 2000,1,0,0);
         string json = JsonUtility.ToJson(user);
 
         _userReference.Child(userID).SetRawJsonValueAsync(json)
@@ -170,11 +166,9 @@ public class FirebaseManager : MonoBehaviour
         else if (loginTask.IsCompleted)
         {
             AuthResult result = loginTask.Result;
-            Debug.LogFormat("User signed in succesfully : {0} {1}", result.User.DisplayName, result.User.UserId);       
-            MainCanvas.instance.LoginPanel.SetActive(false);
-            MainCanvas.instance.MainMenuPanel.SetActive(true);
-
-
+            Debug.LogFormat("User signed in succesfully : {0} {1}", result.User.DisplayName, result.User.UserId);
+            SceneManager.LoadScene("MainMenuScene");
+            ViewManager.Show<MainMenuView>();
         }
     }
 
@@ -198,8 +192,8 @@ public class FirebaseManager : MonoBehaviour
         if (user != null)
         {
             Debug.Log("giriş yapıldı");
-            MainCanvas.instance.LoginPanel.SetActive(false);
-            MainCanvas.instance.MainMenuPanel.SetActive(true);
+            SceneManager.LoadScene("MainMenuScene");
+            ViewManager.Show<MainMenuView>();
         }
 
         else
@@ -229,11 +223,18 @@ public class FirebaseManager : MonoBehaviour
         }
     }
 
-    public void Logout(FirebaseAuth auth)
+    public void Logout()
     {
-        auth.StateChanged -= AuthStateChanged;
-        auth.SignOut();
-        Debug.Log($"Logout User : {auth.CurrentUser.UserId}");
+        if(auth.CurrentUser != null)
+        {
+            Debug.Log($"Logout User : {auth.CurrentUser.UserId}");
+            auth.StateChanged -= AuthStateChanged;
+            auth.SignOut();
+        }
+        else
+        {
+            Debug.Log($"Current User ID is null! : {auth.CurrentUser.UserId}");
+        }
     }
 
     public IEnumerator GetUserAllData()
@@ -248,12 +249,13 @@ public class FirebaseManager : MonoBehaviour
         {
             DataSnapshot snapshot = task.Result;
             string userIDSnapshot = snapshot.Child(user.UserId).Child("UserID").Value.ToString();
-            string userNameSnapshot = snapshot.Child(user.UserId).Child("UserName").Value.ToString();
-            int coinSnapshot = int.Parse(snapshot.Child(user.UserId).Child("Coin").Value.ToString());
+            string userNameSnapshot = snapshot.Child(user.UserId).Child("Username").Value.ToString();
+            int coinSnapshot = int.Parse(snapshot.Child(user.UserId).Child("Chip").Value.ToString());
             int expSnapshot = int.Parse(snapshot.Child(user.UserId).Child("Exp").Value.ToString());
             int levelSnapshot = int.Parse(snapshot.Child(user.UserId).Child("Level").Value.ToString());
             int scoreSnapshot = int.Parse(snapshot.Child(user.UserId).Child("Score").Value.ToString());
 
+            Debug.LogError(userIDSnapshot + userNameSnapshot + coinSnapshot + expSnapshot);
         }
     }
 
@@ -286,6 +288,14 @@ public class FirebaseManager : MonoBehaviour
         }
     }
 
+    public async void SetPlayerStats()
+    {
+        string username = await GetUserStringData("Username");
+        string chipCount = (await GetUserIntData("Chip")).ToString();
+        string level = (await GetUserIntData("Level")).ToString();
+        Debug.Log($"Username : {username}, chipCount : {chipCount}, Level : {level}");
+    }
+
     public void ChangeUserData(string requestedData,int value)
     {
         Dictionary<string, object> childUpdates = new()
@@ -294,8 +304,5 @@ public class FirebaseManager : MonoBehaviour
         };
         _userReference.Child(user.UserId).UpdateChildrenAsync(childUpdates);
     }
-
-
-
 
 }

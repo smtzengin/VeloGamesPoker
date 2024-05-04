@@ -21,7 +21,7 @@ public class LoginView : View
         _emailInputField.text = string.Empty;
         _passwordInputField.text = string.Empty;
         _warningText.text = string.Empty;
-        _firebaseManager = FindObjectOfType<FirebaseManager>();
+        _firebaseManager = FirebaseManager.Instance;
 
     }
 

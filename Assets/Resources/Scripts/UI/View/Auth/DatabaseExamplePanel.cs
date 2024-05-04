@@ -11,7 +11,7 @@ public class DatabaseExamplePanel : MonoBehaviour
     [SerializeField] private TextMeshProUGUI userNicknameText;
     [SerializeField] private TextMeshProUGUI userExpText;
     [SerializeField] private TextMeshProUGUI userLeveltext;
-    [SerializeField] private TextMeshProUGUI userCoinText;
+    [SerializeField] private TextMeshProUGUI userChipText;
     [SerializeField] private TextMeshProUGUI userScoreText;
 
     [SerializeField] private Button increaseScore;
@@ -54,8 +54,8 @@ public class DatabaseExamplePanel : MonoBehaviour
             case "Exp":
                 StartCoroutine(AnimateValueChange(userExpText, int.Parse(userExpText.text), newValue));
                 break;
-            case "Coin":
-                StartCoroutine(AnimateValueChange(userCoinText, int.Parse(userCoinText.text), newValue));
+            case "Chip":
+                StartCoroutine(AnimateValueChange(userChipText, int.Parse(userChipText.text), newValue));
                 break;
             case "Level":
                 StartCoroutine(AnimateValueChange(userLeveltext, int.Parse(userLeveltext.text), newValue));
@@ -84,9 +84,9 @@ public class DatabaseExamplePanel : MonoBehaviour
 
     private async void SetPlayerStats()
     {
-        userNicknameText.text = await _firebaseManager.GetUserStringData("UserName");
+        userNicknameText.text = await _firebaseManager.GetUserStringData("Username");
         userExpText.text = (await _firebaseManager.GetUserIntData("Exp")).ToString();
-        userCoinText.text = (await _firebaseManager.GetUserIntData("Coin")).ToString();
+        userChipText.text = (await _firebaseManager.GetUserIntData("Chip")).ToString();
         userLeveltext.text = (await _firebaseManager.GetUserIntData("Level")).ToString();
         userScoreText.text = (await _firebaseManager.GetUserIntData("Score")).ToString();
 
@@ -151,9 +151,7 @@ public class DatabaseExamplePanel : MonoBehaviour
     {
         if(_firebaseManager.auth != null)
         {
-            _firebaseManager.Logout(_firebaseManager.auth);
-            gameObject.SetActive(false);
-            MainCanvas.instance.LoginPanel.SetActive(true);
+            _firebaseManager.Logout();
         }
         else
         {

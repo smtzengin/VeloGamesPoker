@@ -1,3 +1,4 @@
+using Resources.Scripts.Utility;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,30 +7,21 @@ using UnityEngine;
 
 public class DatabaseManager : MonoBehaviour
 {
-
-    public static DatabaseManager Instance;
+    public static DatabaseManager Instance => Singleton<DatabaseManager>.Instance;
 
     private Dictionary<string, int> playerData = new Dictionary<string, int>
     {
         { "Score", 0 },
         { "Exp", 0 },
         { "Level", 1 },
-        { "Coin", 0 }
+        { "Chip", 0 }
     };
 
     private Dictionary<string, TextMeshProUGUI> textElements = new Dictionary<string, TextMeshProUGUI>();
 
     public event Action<string, int> OnDataChanged;
 
-    private FirebaseManager _firebaseManager;
-
     #region Methods
-
-    private void Awake()
-    {
-        Instance = this;
-        _firebaseManager = FindObjectOfType<FirebaseManager>(true);
-    }
 
     private void Start()
     {
@@ -44,26 +36,26 @@ public class DatabaseManager : MonoBehaviour
         }
     }
 
-    public async void UpdateScore(int value)
+    public void UpdateScore(int value)
     {
         int currentScore = playerData["Score"];
         currentScore += value;
         if (currentScore >= 0)
         {
             playerData["Score"] = currentScore;
-            _firebaseManager.ChangeUserData("Score", currentScore);
+            FirebaseManager.Instance.ChangeUserData("Score", currentScore);
             OnDataChanged?.Invoke("Score", currentScore);
         }
     }
 
-    public async void UpdateExp(int value)
+    public void UpdateExp(int value)
     {
         int currentExp = playerData["Exp"];
         currentExp += value;
         if (currentExp >= 0)
         {
             playerData["Exp"] = currentExp;
-            _firebaseManager.ChangeUserData("Exp", currentExp);
+            FirebaseManager.Instance.ChangeUserData("Exp", currentExp);
             OnDataChanged?.Invoke("Exp", currentExp);
 
             int newLevel = currentExp / 100;
@@ -77,35 +69,20 @@ public class DatabaseManager : MonoBehaviour
     public void UpdateLevel(int value)
     {
         playerData["Level"] = value;
-        _firebaseManager.ChangeUserData("Level", value);
+        FirebaseManager.Instance.ChangeUserData("Level", value);
         OnDataChanged?.Invoke("Level", value);
     }
 
-    public async void UpdateCoin(int value)
+    public void UpdateCash(int value)
     {
-        int currentCoin = playerData["Coin"];
+        int currentCoin = playerData["Chip"];
         currentCoin += value;
         if (currentCoin >= 0)
         {
-            playerData["Coin"] = currentCoin;
-            _firebaseManager.ChangeUserData("Coin", currentCoin);
-            OnDataChanged?.Invoke("Coin", currentCoin);
+            playerData["Chip"] = currentCoin;
+            FirebaseManager.Instance.ChangeUserData("Chip", currentCoin);
+            OnDataChanged?.Invoke("Chip", currentCoin);
         }
     }
-
-    public void Logout()
-    {
-        if (_firebaseManager.auth != null)
-        {
-            _firebaseManager.Logout(_firebaseManager.auth);
-            gameObject.SetActive(false);
-            MainCanvas.instance.LoginPanel.SetActive(true);
-        }
-        else
-        {
-            Debug.Log("Auth is null!");
-        }
-    }
-
     #endregion
 }
