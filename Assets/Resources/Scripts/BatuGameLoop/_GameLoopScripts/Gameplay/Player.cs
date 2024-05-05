@@ -8,7 +8,7 @@ public class Player : MonoBehaviour
     public bool IsFull { get; private set; } = false;
 
     [SerializeField] protected List<CardSO> _hand;
-    [SerializeField] private int _chips = 2000;
+    [SerializeField] private int _chips;
     [SerializeField] private int _currentBet = 0;
     [SerializeField] private int _lastBet;
     [SerializeField] private Transform _dealerTransform;
@@ -63,12 +63,32 @@ public class Player : MonoBehaviour
     {
         _playerAnimation.BackToTrigger();
     }
-    public int GetChips() { return _chips; }
-    public void DecreaseChips(int amount) { _chips -= amount; }
-    public void IncreaseChips(int amount) { _chips += amount; }
+    public int GetChips() { 
+        return _chips; 
+    }
+    public void DecreaseChips(int amount) {
+        _chips -= amount;
+
+        if (_localPlayer)
+        {
+            DatabaseManager.Instance.UpdateChip(-amount);
+        }
+    }
+    public void IncreaseChips(int amount) { 
+        _chips += amount;
+        if (_localPlayer)
+        {
+            DatabaseManager.Instance.UpdateChip(amount);
+        }
+    }
     public void SetChips(int chips)
     {
         _chips = chips;
+        UpdateCanvas();
+    }
+    public async void GetChipData()
+    {
+        _chips = await FirebaseManager.Instance.GetUserIntData("Chip");
         UpdateCanvas();
     }
     public void SetSeatTo(bool b) { IsFull = b; }

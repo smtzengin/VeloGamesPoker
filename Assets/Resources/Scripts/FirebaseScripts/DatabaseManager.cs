@@ -1,7 +1,8 @@
-using Resources.Scripts.Utility;
+﻿using Resources.Scripts.Utility;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 
@@ -9,12 +10,17 @@ public class DatabaseManager : MonoBehaviour
 {
     public static DatabaseManager Instance => Singleton<DatabaseManager>.Instance;
 
+    private static int score;
+    private static int exp;
+    private static int level;
+    private static int chip;
+
     private Dictionary<string, int> playerData = new Dictionary<string, int>
     {
-        { "Score", 0 },
-        { "Exp", 0 },
-        { "Level", 1 },
-        { "Chip", 0 }
+        { "Score", score},
+        { "Exp", exp },
+        { "Level", level },
+        { "Chip", chip }
     };
 
     private Dictionary<string, TextMeshProUGUI> textElements = new Dictionary<string, TextMeshProUGUI>();
@@ -23,9 +29,11 @@ public class DatabaseManager : MonoBehaviour
 
     #region Methods
 
-    private void Start()
+    private async void Start()
     {
         OnDataChanged += HandleDataChanged;
+        await SetPlayerData();
+        Debug.Log($"Current Chip : {playerData["Chip"]}");
     }
 
     private void HandleDataChanged(string dataType, int newValue)
@@ -36,8 +44,9 @@ public class DatabaseManager : MonoBehaviour
         }
     }
 
-    public void UpdateScore(int value)
+    public async void UpdateScore(int value)
     {
+        await SetPlayerData();
         int currentScore = playerData["Score"];
         currentScore += value;
         if (currentScore >= 0)
@@ -48,8 +57,9 @@ public class DatabaseManager : MonoBehaviour
         }
     }
 
-    public void UpdateExp(int value)
+    public async void UpdateExp(int value)
     {
+        await SetPlayerData();
         int currentExp = playerData["Exp"];
         currentExp += value;
         if (currentExp >= 0)
@@ -61,28 +71,39 @@ public class DatabaseManager : MonoBehaviour
             int newLevel = currentExp / 100;
             if (newLevel > playerData["Level"])
             {
-                UpdateLevel(newLevel);
+                await UpdateLevel(newLevel);
             }
         }
     }
 
-    public void UpdateLevel(int value)
+    public async Task UpdateLevel(int value)
     {
+        await SetPlayerData();
         playerData["Level"] = value;
         FirebaseManager.Instance.ChangeUserData("Level", value);
         OnDataChanged?.Invoke("Level", value);
     }
-
-    public void UpdateCash(int value)
+    public async void UpdateChip(int value)
     {
-        int currentCoin = playerData["Chip"];
-        currentCoin += value;
-        if (currentCoin >= 0)
-        {
-            playerData["Chip"] = currentCoin;
-            FirebaseManager.Instance.ChangeUserData("Chip", currentCoin);
-            OnDataChanged?.Invoke("Chip", currentCoin);
-        }
+        await SetPlayerData();
+        int currentChip = playerData["Chip"];
+        currentChip += value;
+        playerData["Chip"] = currentChip;
+        FirebaseManager.Instance.ChangeUserData("Chip", currentChip);
+        OnDataChanged?.Invoke("Chip", currentChip);
+    }
+
+    public async Task SetPlayerData()
+    {
+        score = await FirebaseManager.Instance.GetUserIntData("Score");
+        exp = await FirebaseManager.Instance.GetUserIntData("Exp");
+        level = await FirebaseManager.Instance.GetUserIntData("Level");
+        chip = await FirebaseManager.Instance.GetUserIntData("Chip");
+
+        playerData["Score"] = score;
+        playerData["Exp"] = exp;
+        playerData["Level"] = level;
+        playerData["Chip"] = chip;
     }
     #endregion
 }

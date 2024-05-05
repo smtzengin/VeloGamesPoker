@@ -34,7 +34,8 @@ public class CharacterSetup : MonoBehaviour
         }
         else
         {
-            //Get Player's chips from database
+            //Get Player Chip from database
+            player.GetChipData();
         }
         newPlayer.GetComponent<PlayerAnimation>().SetInformation(chairNo, parent);
         newPlayer.transform.GetChild(0).GetComponent<Renderer>().material = _characterMaterials[Random.Range(0, _characterMaterials.Length)];

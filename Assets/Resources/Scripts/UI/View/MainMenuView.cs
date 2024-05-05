@@ -8,7 +8,8 @@ using UnityEngine.UI;
 public class MainMenuView : View
 {
     [SerializeField] private Button _settingsButton, _playButton, _leaderboardButton,_logoutButton;
-    [SerializeField] private LeaderboardView _leaderboardView;
+
+    [SerializeField] private Button _increaseButton;
     public override void Initialize()
     {
         _settingsButton.onClick.AddListener(() => ViewManager.Show<SettingsView>());
@@ -17,6 +18,7 @@ public class MainMenuView : View
             ViewManager.Show<LeaderboardView>();       
         });
         _playButton.onClick.AddListener(() => SceneManager.LoadScene("Eyup"));
+        _increaseButton.onClick.AddListener(() => DatabaseManager.Instance.UpdateChip(120)); 
     }
 
     public void Logout()

@@ -298,6 +298,7 @@ public class FirebaseManager : MonoBehaviour
 
     public void ChangeUserData(string requestedData,int value)
     {
+        Debug.Log("buradayım");
         Dictionary<string, object> childUpdates = new()
         {
             [requestedData] = value,

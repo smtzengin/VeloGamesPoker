@@ -209,6 +209,8 @@ public class GameLoopManager : MonoBehaviour
         else
         {
             UIManager.ToggleEndPanel(won: false);
+            int randomScore = Random.Range(10, 30);
+            DatabaseManager.Instance.UpdateScore(randomScore);
             AudioManager.PlayAudio(_loseSfx);
         }
         winner.IncreaseChips(CurrentBet);

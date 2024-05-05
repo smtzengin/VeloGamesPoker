@@ -50,8 +50,8 @@ public class LeaderboardView : View
 
         for (int i = 0; i < leaderboardGameObjects.Count; i++)
         {
-            int newScale = i * 120;
-            leaderboardGameObjects[i].transform.DOLocalMoveY(250 - newScale, 0.5f);
+            int newScale = i * 105;
+            leaderboardGameObjects[i].transform.DOLocalMoveY(300 - newScale, 0.5f);
         }
     }
 
@@ -107,12 +107,15 @@ public class LeaderboardView : View
     {
         for (int i = 0; i < leaderboardData.Count; i++)
         {
-            leaderboardGameObjects[i].GetComponentInChildren<TextMeshProUGUI>().text = leaderboardData[i].Username + "-" +leaderboardData[i].ChipCount;
+            leaderboardGameObjects[i].transform.GetChild(0).GetComponentInChildren<TextMeshProUGUI>().text = leaderboardData[i].ChipCount.ToString();
+            leaderboardGameObjects[i].transform.GetChild(1).GetComponentInChildren<TextMeshProUGUI>().text = leaderboardData[i].Username.ToString();
+
         }
 
         if (userPlayerData != null)
         {
-            leaderboardGameObjects[5].GetComponentInChildren<TextMeshProUGUI>().text = userPlayerData.Username + "-" + userPlayerData.ChipCount;
+            leaderboardGameObjects[5].transform.GetChild(0).GetComponentInChildren<TextMeshProUGUI>().text = userPlayerData.ChipCount.ToString();
+            leaderboardGameObjects[5].transform.GetChild(1).GetComponentInChildren<TextMeshProUGUI>().text = userPlayerData.Username.ToString();
         }
 
         ShowPanel();
