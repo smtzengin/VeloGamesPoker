@@ -33,7 +33,6 @@ public class DatabaseManager : MonoBehaviour
     {
         OnDataChanged += HandleDataChanged;
         await SetPlayerData();
-        Debug.Log($"Current Chip : {playerData["Chip"]}");
     }
 
     private void HandleDataChanged(string dataType, int newValue)
@@ -57,22 +56,18 @@ public class DatabaseManager : MonoBehaviour
         }
     }
 
-    public async void UpdateExp(int value)
+    public async Task UpdateExp(int value)
     {
         await SetPlayerData();
-        int currentExp = playerData["Exp"];
-        currentExp += value;
-        if (currentExp >= 0)
-        {
-            playerData["Exp"] = currentExp;
-            FirebaseManager.Instance.ChangeUserData("Exp", currentExp);
-            OnDataChanged?.Invoke("Exp", currentExp);
+        playerData["Exp"] = value;
+        FirebaseManager.Instance.ChangeUserData("Exp", value);
+        OnDataChanged?.Invoke("Exp", value);
 
-            int newLevel = currentExp / 100;
-            if (newLevel > playerData["Level"])
-            {
-                await UpdateLevel(newLevel);
-            }
+        // Yeni seviye kontrolü
+        int newLevel = value / 100;
+        if (newLevel > playerData["Level"])
+        {
+            await UpdateLevel(newLevel);
         }
     }
 
@@ -83,7 +78,7 @@ public class DatabaseManager : MonoBehaviour
         FirebaseManager.Instance.ChangeUserData("Level", value);
         OnDataChanged?.Invoke("Level", value);
     }
-    public async void UpdateChip(int value)
+    public async Task UpdateChip(int value)
     {
         await SetPlayerData();
         int currentChip = playerData["Chip"];

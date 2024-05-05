@@ -1,5 +1,6 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -24,7 +25,7 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         _hand = new List<CardSO>();
-        //ge�ici olarak 2000 chip at�yoruz hepsine
+        //geçici olarak 2000 chip atýyoruz hepsine
         UpdateCanvas();
     }
     public void ReceiveCards(CardSO card)
@@ -48,7 +49,7 @@ public class Player : MonoBehaviour
         _playerAnimation.BidTrigger();
         _lastBet = amount;
         _currentBet += amount;
-        DecreaseChips(amount);
+        DecreaseChipsAsync(amount);
         UpdateCanvas();
     }
     public void Check()
@@ -66,19 +67,21 @@ public class Player : MonoBehaviour
     public int GetChips() { 
         return _chips; 
     }
-    public void DecreaseChips(int amount) {
+
+    //Update Chip taskını çalıştırmak için async yapıyoruz
+    public async Task DecreaseChipsAsync(int amount) {
         _chips -= amount;
 
         if (_localPlayer)
         {
-            DatabaseManager.Instance.UpdateChip(-amount);
+            await DatabaseManager.Instance.UpdateChip(-amount);
         }
     }
-    public void IncreaseChips(int amount) { 
+    public async Task IncreaseChipsAsync(int amount) { 
         _chips += amount;
         if (_localPlayer)
         {
-            DatabaseManager.Instance.UpdateChip(amount);
+            await DatabaseManager.Instance.UpdateChip(amount);
         }
     }
     public void SetChips(int chips)
@@ -86,9 +89,10 @@ public class Player : MonoBehaviour
         _chips = chips;
         UpdateCanvas();
     }
-    public async void GetChipData()
+    public async void GetChipDataForPlayer()
     {
-        _chips = await FirebaseManager.Instance.GetUserIntData("Chip");
+        if (_localPlayer)
+            _chips = await FirebaseManager.Instance.GetUserIntData("Chip");   
         UpdateCanvas();
     }
     public void SetSeatTo(bool b) { IsFull = b; }

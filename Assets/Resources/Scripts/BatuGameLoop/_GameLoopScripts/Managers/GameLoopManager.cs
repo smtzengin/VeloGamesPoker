@@ -205,15 +205,18 @@ public class GameLoopManager : MonoBehaviour
             UIManager.ToggleEndPanel(won: true);
             AudioManager.PlayAudio(_wonSfx);
             _levelSystem.GainXP(CurrentBet);
+            int randomScore = Random.Range(10, 30);
+            DatabaseManager.Instance.UpdateScore(randomScore);
         }
         else
         {
             UIManager.ToggleEndPanel(won: false);
+            _levelSystem.GainXP(CurrentBet);
             int randomScore = Random.Range(10, 30);
             DatabaseManager.Instance.UpdateScore(randomScore);
             AudioManager.PlayAudio(_loseSfx);
         }
-        winner.IncreaseChips(CurrentBet);
+        winner.IncreaseChipsAsync(CurrentBet);
     }
     private int CompareHands(List<CardSO> hand1, List<CardSO> hand2)
     {

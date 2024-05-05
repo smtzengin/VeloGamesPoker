@@ -52,7 +52,7 @@ public class GameController : MonoBehaviour
         {
             panel.transform.localScale = Vector3.zero;
             panel.transform.DOScale(1, _animationDuration).SetEase(_animationEase);
-            //TO DO: Score ve EXP kazandır!
+            
         }
     }
 

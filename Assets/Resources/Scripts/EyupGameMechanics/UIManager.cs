@@ -86,7 +86,7 @@ public class UIManager : MonoBehaviour
 
     public static void ReturnToMain()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(1);
     }
     public static void ResetGame()
     {
@@ -105,5 +105,7 @@ public class UIManager : MonoBehaviour
     {
         Debug.Log("EndToggle");
         instance._controller.TogglePanel(won);
+
     }
+
 }

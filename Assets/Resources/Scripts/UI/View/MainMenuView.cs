@@ -8,8 +8,17 @@ using UnityEngine.UI;
 public class MainMenuView : View
 {
     [SerializeField] private Button _settingsButton, _playButton, _leaderboardButton,_logoutButton;
+    [SerializeField] private FreeChipView _freeChipView;
 
-    [SerializeField] private Button _increaseButton;
+    private async void OnEnable()
+    {
+        int userChipCount = await FirebaseManager.Instance.GetUserIntData("Chip");
+        if(userChipCount < 500)
+        {
+            _freeChipView.gameObject.SetActive(true);
+        }
+    }
+
     public override void Initialize()
     {
         _settingsButton.onClick.AddListener(() => ViewManager.Show<SettingsView>());
@@ -18,7 +27,6 @@ public class MainMenuView : View
             ViewManager.Show<LeaderboardView>();       
         });
         _playButton.onClick.AddListener(() => SceneManager.LoadScene("Eyup"));
-        _increaseButton.onClick.AddListener(() => DatabaseManager.Instance.UpdateChip(120)); 
     }
 
     public void Logout()
@@ -32,5 +40,6 @@ public class MainMenuView : View
         else
             Debug.Log("Auth is null!");
     }
+
 
 }
