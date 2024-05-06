@@ -24,6 +24,7 @@ public class ActionHelpers : MonoBehaviour
         _raise.onClick.AddListener(delegate { Raise(_player, _raiseAmount); Choosed(); });
         _increaseBid.onClick.AddListener(delegate { IncreaseBid();});
         _decreaseBid.onClick.AddListener(delegate { DecreaseBid();});
+        _allInOne.onClick.AddListener(delegate { AllIn(_player); });
     }
     private void Choosed()
     {

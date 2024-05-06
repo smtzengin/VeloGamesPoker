@@ -78,13 +78,4 @@ public class GameController : MonoBehaviour
     {
         UIManager.ReturnToMain();
     }
-
-    public void SetWinPanelText(int score, int exp)
-    {
-        winPanelText.text = $"Congratulations! Now step away from the poker table and enjoy your winnings! You get {score} score and {exp} exp! ";
-    }
-    public void SetLosePanelText(int score, int exp)
-    {
-        losePanelText.text = $"You lost! Want to give it another try? You get {score} score and {exp} exp! ";
-    }
 }
