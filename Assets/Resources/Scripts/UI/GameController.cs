@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
-using UnityEngine.SceneManagement;
+
+using TMPro;
 
 public class GameController : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class GameController : MonoBehaviour
     [SerializeField] private Button _winCloseButton, _loseCloseButton, _winContButton, _loseContButton;
     [SerializeField] private float _animationDuration = 0.5f;
     [SerializeField] private Ease _animationEase = Ease.InOutQuad;
+    [SerializeField] private Text winPanelText;
+    [SerializeField] private Text losePanelText;
 
     void Start()
     {
@@ -74,5 +77,14 @@ public class GameController : MonoBehaviour
     private void MainMenu()
     {
         UIManager.ReturnToMain();
+    }
+
+    public void SetWinPanelText(int score, int exp)
+    {
+        winPanelText.text = $"Congratulations! Now step away from the poker table and enjoy your winnings! You get {score} score and {exp} exp! ";
+    }
+    public void SetLosePanelText(int score, int exp)
+    {
+        losePanelText.text = $"You lost! Want to give it another try? You get {score} score and {exp} exp! ";
     }
 }

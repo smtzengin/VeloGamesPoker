@@ -2563,6 +2563,8 @@ MonoBehaviour:
   _loseContButton: {fileID: 133101421}
   _animationDuration: 0.75
   _animationEase: 7
+  winPanelText: {fileID: 2093697632}
+  losePanelText: {fileID: 1976960352}
 --- !u!1 &390023764
 GameObject:
   m_ObjectHideFlags: 0
@@ -5290,6 +5292,8 @@ MonoBehaviour:
   _loseContButton: {fileID: 133101421}
   _animationDuration: 0.75
   _animationEase: 7
+  winPanelText: {fileID: 0}
+  losePanelText: {fileID: 0}
 --- !u!4 &925466289 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4391709203804994, guid: 4eefa0418bd6ec742aa2a3c014d1b60f, type: 3}
