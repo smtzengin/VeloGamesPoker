@@ -63,7 +63,6 @@ public class AudioManager : MonoBehaviour
     public static void PlayAudio(AudioClip clip) => instance.PlayAudio(clip, 0);
     private void PlayAudio(AudioClip clip, int attempt)
     {
-        Debug.Log(attempt);
         if (attempt == _sources.Count)
         {
             _sources.Add(gameObject.AddComponent<AudioSource>());

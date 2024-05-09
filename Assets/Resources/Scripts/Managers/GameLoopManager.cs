@@ -67,7 +67,7 @@ public class GameLoopManager : MonoBehaviour
             if (_currentPlayerIndex >= _currentPlayers.Count) //If last player fold, return.
                 return;
             int lastBid = _currentPlayers[_currentPlayerIndex].GetCurrentBid();
-            if (_currentPlayers.TrueForAll((x) => x.GetCurrentBid() == lastBid))
+            if (_currentPlayers.TrueForAll((x) => x.GetCurrentBid() == lastBid) || _currentPlayers.TrueForAll((x) => x.DidAllIn))  
                 UpdateRound();
         }
     }
@@ -134,6 +134,7 @@ public class GameLoopManager : MonoBehaviour
     }
     public void SetupLine()
     {
+        ActionHelpers._isAllIn = false;
         _lastDealer = _lastDealer == 200 ? Random.Range(0, _allPlayers.Length) : _lastDealer;
         _currentPlayers = new List<Player>();
 
@@ -258,16 +259,18 @@ public class GameLoopManager : MonoBehaviour
     }
     void CheckTurn()
     {
-
         if (!AreFirstBetsDone())
             return;
-
-        ActionHelpers.Instance.CheckChips(_currentPlayers[_currentPlayerIndex]);
-        if (_currentPlayers[_currentPlayerIndex].IsLocalPlayer) //Sýradaki karakter bizim karakter ise
+        if (_currentPlayers[_currentPlayerIndex].IsLocalPlayer)             //Sýradaki karakter bizim karakter ise
+        {
             UIManager.AllButtonsActive(active: true);
+            ActionHelpers.Instance.CheckChips(_currentPlayers[_currentPlayerIndex]);
+        }
         else
+        {
+            ActionHelpers.Instance.CheckChips(_currentPlayers[_currentPlayerIndex]);
             _currentPlayers[_currentPlayerIndex].GetComponent<AIClass>().AIMakeDecision();
-
+        }
     }
     public void StartRound()
     {
