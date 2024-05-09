@@ -14,13 +14,38 @@ public class AIClass : Player
     private PokerHand _bestHand;
     public void AIMakeDecision()
     {
-        if (Table.Instance.GetCards().Count < 3)
+        if (ActionHelpers._isAllIn)
+        {
+            AllInCards();
+            return;
+        }
+        else if (Table.Instance.GetCards().Count < 3)
         {
             BeforeCards();
             return;
         }
-
-        AfterCards();
+            // gameloopmanagere bir bool ata deger boolsa oyuncu belirli bir oranla ne yapacagina karar versin else if () { }
+        else
+            AfterCards();
+    }
+    private void AllInCards()
+    {
+        if (_didAllIn)
+        {
+            Debug.Log("Check allin");
+            ActionHelpers.Instance.Call(this);
+            return;
+        }
+        int random = Random.Range(0, 100);
+        int currentChip = GetChips();
+        Debug.Log("random =" + random + "mevcut chipi =" + currentChip + "min bit=" + GameLoopManager.Instance.MinBet);
+        if (random > 80)
+            Fold();
+        else if (random > 25 && currentChip >= GameLoopManager.Instance.MinBet)
+            ActionHelpers.Instance.Call(this);
+        else
+            ActionHelpers.Instance.AllIn(this);
+        _didAllIn = true;
     }
     private void BeforeCards()
     {
@@ -48,7 +73,6 @@ public class AIClass : Player
 
         TryBet(decision);
     }
-
     private void TryBet(float decision)
     {
         if (GameLoopManager.Instance.InRoundTour < 3)

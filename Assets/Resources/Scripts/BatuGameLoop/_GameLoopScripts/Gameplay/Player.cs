@@ -19,6 +19,8 @@ public class Player : MonoBehaviour
     private PlayerAnimation _playerAnimation;
     public bool IsLocalPlayer { get { return _localPlayer; } }
     [SerializeField] private bool _localPlayer;
+    [SerializeField] protected bool _didAllIn;
+    public bool DidAllIn { get { return _didAllIn; } set { _didAllIn = value; } }
 
     [SerializeField] private PlayerCanvas _playerCanvas;
 
@@ -62,14 +64,17 @@ public class Player : MonoBehaviour
     }
     public void BackToTable()
     {
+        _didAllIn = false;
         _playerAnimation.BackToTrigger();
     }
-    public int GetChips() { 
-        return _chips; 
+    public int GetChips()
+    {
+        return _chips;
     }
 
     //Update Chip taskını çalıştırmak için async yapıyoruz
-    public async Task DecreaseChipsAsync(int amount) {
+    public async Task DecreaseChipsAsync(int amount)
+    {
         _chips -= amount;
 
         if (_localPlayer)
@@ -77,7 +82,8 @@ public class Player : MonoBehaviour
             await DatabaseManager.Instance.UpdateChip(-amount);
         }
     }
-    public async Task IncreaseChipsAsync(int amount) { 
+    public async Task IncreaseChipsAsync(int amount)
+    {
         _chips += amount;
         if (_localPlayer)
         {
@@ -92,7 +98,7 @@ public class Player : MonoBehaviour
     public async void GetChipDataForPlayer()
     {
         if (_localPlayer)
-            _chips = await FirebaseManager.Instance.GetUserIntData("Chip");   
+            _chips = await FirebaseManager.Instance.GetUserIntData("Chip");
         UpdateCanvas();
     }
     public void SetSeatTo(bool b) { IsFull = b; }
