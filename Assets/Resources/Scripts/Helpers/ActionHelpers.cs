@@ -84,7 +84,6 @@ public class ActionHelpers : MonoBehaviour
         if (p.GetCurrentBid() <= GameLoopManager.Instance.MinBet)
             newBid = (GameLoopManager.Instance.MinBet - p.GetCurrentBid()) + amount;
 
-        Debug.Log(GameLoopManager.Instance.MinBet + " VE " +p.GetCurrentBid());
         p.AddBid(newBid);
 
         if (p.IsLocalPlayer)

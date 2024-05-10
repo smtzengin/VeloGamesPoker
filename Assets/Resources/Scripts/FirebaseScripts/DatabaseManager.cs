@@ -1,4 +1,5 @@
-﻿using Resources.Scripts.Utility;
+﻿using Firebase.Extensions;
+using Resources.Scripts.Utility;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -23,26 +24,41 @@ public class DatabaseManager : MonoBehaviour
         { "Chip", chip }
     };
 
-    private Dictionary<string, TextMeshProUGUI> textElements = new Dictionary<string, TextMeshProUGUI>();
-
     public event Action<string, int> OnDataChanged;
 
     #region Methods
 
     private async void Start()
     {
-        OnDataChanged += HandleDataChanged;
         await SetPlayerData();
     }
 
-    private void HandleDataChanged(string dataType, int newValue)
+    //Adding a new user to the database with userId.
+    public void RegisterNewUser(string userID, string username)
     {
-        if (textElements.ContainsKey(dataType))
-        {
-            textElements[dataType].text = newValue.ToString();
-        }
+        User user = new User(userID, username, 2000, 1, 0, 0);
+        string json = JsonUtility.ToJson(user);
+
+        FirebaseManager.Instance.UserReference.Child(userID).SetRawJsonValueAsync(json)
+            .ContinueWithOnMainThread(task =>
+            {
+                if (task.IsFaulted)
+                {
+                    Debug.LogError("Failed to save user data: " + task.Exception);
+                }
+                else if (task.IsCanceled)
+                {
+                    Debug.LogError("Canceled to save user data: " + task.Exception);
+                }
+                else if (task.IsCompleted)
+                {
+
+                    Debug.Log("User data saved successfully");
+                }
+            });
     }
 
+    //Updating score on the database.
     public async void UpdateScore(int value)
     {
         await SetPlayerData();
@@ -55,7 +71,7 @@ public class DatabaseManager : MonoBehaviour
             OnDataChanged?.Invoke("Score", currentScore);
         }
     }
-
+    //Updating exp on the database.
     public async Task UpdateExp(int value)
     {
         await SetPlayerData();
@@ -63,14 +79,13 @@ public class DatabaseManager : MonoBehaviour
         FirebaseManager.Instance.ChangeUserData("Exp", value);
         OnDataChanged?.Invoke("Exp", value);
 
-        // Yeni seviye kontrolü
         int newLevel = value / 100;
         if (newLevel > playerData["Level"])
         {
             await UpdateLevel(newLevel);
         }
     }
-
+    //Updating Level on the database.
     public async Task UpdateLevel(int value)
     {
         await SetPlayerData();
@@ -78,6 +93,7 @@ public class DatabaseManager : MonoBehaviour
         FirebaseManager.Instance.ChangeUserData("Level", value);
         OnDataChanged?.Invoke("Level", value);
     }
+    //Updating Chip on the database.
     public async Task UpdateChip(int value)
     {
         await SetPlayerData();

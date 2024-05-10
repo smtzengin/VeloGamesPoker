@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public enum CardSign
@@ -41,11 +39,6 @@ public class Card : MonoBehaviour, IComparable<Card>
 
     public Card SecondCard;
 
-
-    private void Start()
-    {
-        
-    }
 
     public CardColor GetCardColor()
     {
@@ -91,45 +84,12 @@ public class Card : MonoBehaviour, IComparable<Card>
         if ((int)card.Value == (int)other.CardSO.Value)
         {
             if ((int)card.Sign == (int)other.CardSO.Sign)
-                return 0; //równe karty, w sumie niemożliwa sytuacja w grze
+                return 0; 
 
-            return (int)card.Sign - (int)other.CardSO.Sign; //jeśli karta ma wyższy znak, zwraca liczbę dodatnią
+            return (int)card.Sign - (int)other.CardSO.Sign; 
         }
 
         return (int)card.Value - (int)other.CardSO.Value;
     }
-    #region Operator Overloads
-    //Operator overload
-    public static bool operator ==(Card first, Card second)
-    {
-        if (first.CompareTo(second) == 0)
-            return true;
 
-        return false;
-    }
-    //Operator overload
-    public static bool operator !=(Card first, Card second)
-    {
-        if (first.CompareTo(second) != 0)
-            return true;
-
-        return false;
-    }
-    //Operator overload
-    public static bool operator >(Card first, Card second)
-    {
-        if (first.CompareTo(second) > 0)
-            return true;
-
-        return false;
-    }
-    //Operator overload
-    public static bool operator <(Card first, Card second)
-    {
-        if (first.CompareTo(second) < 0)
-            return true;
-
-        return false;
-    } 
-    #endregion
 }

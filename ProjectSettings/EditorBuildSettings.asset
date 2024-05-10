@@ -12,6 +12,6 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenuScene.unity
     guid: 3b21216598a675d44be4488fff7ec107
   - enabled: 1
-    path: Assets/Scenes/Eyup.unity
+    path: Assets/Scenes/GameScene.unity
     guid: 5fff9472adf518940a61884361d04e17
   m_configObjects: {}

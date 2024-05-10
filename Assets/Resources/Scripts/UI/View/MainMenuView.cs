@@ -26,7 +26,7 @@ public class MainMenuView : View
         _leaderboardButton.onClick.AddListener(() => { 
             ViewManager.Show<LeaderboardView>();       
         });
-        _playButton.onClick.AddListener(() => SceneManager.LoadScene("Eyup"));
+        _playButton.onClick.AddListener(() => StartCoroutine(LoadingCanvas.Instance.LoadNewScene("GameScene")));
     }
 
     public void Logout()
@@ -34,7 +34,7 @@ public class MainMenuView : View
         if (FirebaseManager.Instance.auth != null)
         {
             FirebaseManager.Instance.Logout();
-            SceneManager.LoadScene("GUI");         
+            StartCoroutine(LoadingCanvas.Instance.LoadNewScene("GUI"));         
             ViewManager.Show<LoginView>();
         }
         else

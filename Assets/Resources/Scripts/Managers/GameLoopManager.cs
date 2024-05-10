@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 
 public class GameLoopManager : MonoBehaviour
@@ -7,7 +7,7 @@ public class GameLoopManager : MonoBehaviour
 
     [SerializeField] Player[] _allPlayers;
     [SerializeField] List<Player> _currentPlayers;
-    LevelSystem _levelSystem;
+    private LevelSystem _levelSystem;
     private int _currentPlayerIndex = 0, _actionCount = 0;
 
     [SerializeField] private GameRound _currentRound;
@@ -27,7 +27,6 @@ public class GameLoopManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
             _levelSystem = GetComponent<LevelSystem>();
             SetupLine();
         }
@@ -63,7 +62,6 @@ public class GameLoopManager : MonoBehaviour
     {
         if (_currentRound != GameRound.PreFlop || (_currentRound == GameRound.PreFlop && _actionCount > _currentPlayers.Count + 1))
         {
-            Debug.Log(_currentPlayerIndex);
             if (_currentPlayerIndex >= _currentPlayers.Count) //If last player fold, return.
                 return;
             int lastBid = _currentPlayers[_currentPlayerIndex].GetCurrentBid();
@@ -116,7 +114,6 @@ public class GameLoopManager : MonoBehaviour
                 _currentRound = GameRound.Showdown;
                 break;
             case GameRound.Showdown:
-                Debug.Log($"Turlar bitti/ Oyun bitti");
                 SelectBestCombination();
                 break;
         }
@@ -171,7 +168,7 @@ public class GameLoopManager : MonoBehaviour
             PokerHand playersBestHand = PokerHand.HighCard;
             foreach (List<CardSO> combination in allCombinations)
             {
-                PokerHand currentHand = PokerHandEvaluator.Instance.EvaluateHand(combination); // Her bir kombinasyonu deðerlendir
+                PokerHand currentHand = PokerHandEvaluator.Instance.EvaluateHand(combination); // Her bir kombinasyonu deÃ°erlendir
                 if (winnerHand == null)
                 {
                     winner = _currentPlayers[i];
@@ -204,6 +201,7 @@ public class GameLoopManager : MonoBehaviour
         if (winner.IsLocalPlayer)
         {
             UIManager.ToggleEndPanel(won: true);
+            
             AudioManager.PlayAudio(_wonSfx);
             _levelSystem.GainXP(CurrentBet);
             int randomScore = Random.Range(10, 30);
@@ -212,19 +210,20 @@ public class GameLoopManager : MonoBehaviour
         else
         {
             UIManager.ToggleEndPanel(won: false);
+            StartCoroutine(UIManager.instance.SetOtherPlayerWinText($"{winner.name} won!"));
             _levelSystem.GainXP(CurrentBet);
             int randomScore = Random.Range(10, 30);
             DatabaseManager.Instance.UpdateScore(randomScore);
             AudioManager.PlayAudio(_loseSfx);
         }
-        winner.IncreaseChipsAsync(CurrentBet);
+        _ = winner.IncreaseChipsAsync(CurrentBet);
     }
     private int CompareHands(List<CardSO> hand1, List<CardSO> hand2)
     {
         hand1.Sort((x, y) => x.Value.CompareTo(y.Value));
         hand2.Sort((x, y) => x.Value.CompareTo(y.Value));
 
-        for (int i = hand1.Count - 1; i >= 0; i--) //Kartlari en yüksekten en kücüge dogru karsilastir
+        for (int i = hand1.Count - 1; i >= 0; i--) //Kartlari en yÃ¼ksekten en kÃ¼cÃ¼ge dogru karsilastir
         {
             if (hand1[i].Value > hand2[i].Value)
                 return 1;
@@ -261,7 +260,7 @@ public class GameLoopManager : MonoBehaviour
     {
         if (!AreFirstBetsDone())
             return;
-        if (_currentPlayers[_currentPlayerIndex].IsLocalPlayer)             //Sýradaki karakter bizim karakter ise
+        if (_currentPlayers[_currentPlayerIndex].IsLocalPlayer)//SÄ±radaki bizim karakter ise
         {
             UIManager.AllButtonsActive(active: true);
             ActionHelpers.Instance.CheckChips(_currentPlayers[_currentPlayerIndex]);

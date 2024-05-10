@@ -1,3 +1,4 @@
+using Resources.Scripts.Utility;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -20,7 +21,6 @@ public class PokerHandEvaluator : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
     public PokerHand EvaluateHand(List<CardSO> hand)
     {
         //hand.Sort((x, y) => x.Value.CompareTo(y.Value)); //eli kart degerine göre siralicak

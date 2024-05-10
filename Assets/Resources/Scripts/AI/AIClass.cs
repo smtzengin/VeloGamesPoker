@@ -24,7 +24,6 @@ public class AIClass : Player
             BeforeCards();
             return;
         }
-            // gameloopmanagere bir bool ata deger boolsa oyuncu belirli bir oranla ne yapacagina karar versin else if () { }
         else
             AfterCards();
     }
@@ -32,13 +31,11 @@ public class AIClass : Player
     {
         if (_didAllIn)
         {
-            Debug.Log("Check allin");
             ActionHelpers.Instance.Call(this);
             return;
         }
         int random = Random.Range(0, 100);
         int currentChip = GetChips();
-        Debug.Log("random =" + random + "mevcut chipi =" + currentChip + "min bit=" + GameLoopManager.Instance.MinBet);
         if (random > 80)
             Fold();
         else if (random > 25 && currentChip >= GameLoopManager.Instance.MinBet)

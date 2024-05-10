@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    private static UIManager instance;
+    public static UIManager instance;
     [SerializeField] private Image[] _handCards;
     [SerializeField] private Image[] _tableCards;
     [SerializeField] private Image _levelFill;
@@ -16,7 +16,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _tableChipText, _raiseText, _levelText;
     // 0. FOLD, 1. Call, 2. All In One, 3. Raise, 4. Decrease, 5. Increase
     [SerializeField] private Button[] _buttons;
-    [SerializeField] private GameController _controller;
+    [SerializeField] private WinLosePanelController _controller;
+
+
+    [SerializeField] private TextMeshProUGUI _otherPlayerWinText;
     private void Awake()
     {
         instance = this;
@@ -83,11 +86,6 @@ public class UIManager : MonoBehaviour
         _levelFill.fillAmount = fill;
         _levelText.text = level.ToString();
     }
-
-    public static void ReturnToMain()
-    {
-        SceneManager.LoadScene(1);
-    }
     public static void ResetGame()
     {
         instance.Reset();
@@ -103,9 +101,15 @@ public class UIManager : MonoBehaviour
     }
     public static void ToggleEndPanel(bool won)
     {
-        Debug.Log("EndToggle");
         instance._controller.TogglePanel(won);
+    }
 
+    public IEnumerator SetOtherPlayerWinText(string text)
+    {
+        _otherPlayerWinText.gameObject.SetActive(true);
+        _otherPlayerWinText.text = text;
+        yield return new WaitForSeconds(2);
+        _otherPlayerWinText.gameObject.SetActive(false);
     }
 
 }

@@ -1,10 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
-
 using TMPro;
+using System.Collections;
 
-public class GameController : MonoBehaviour
+public class WinLosePanelController : MonoBehaviour
 {
     [SerializeField] private GameObject _winPanel;
     [SerializeField] private GameObject _losePanel;
@@ -12,8 +12,7 @@ public class GameController : MonoBehaviour
     [SerializeField] private Button _winCloseButton, _loseCloseButton, _winContButton, _loseContButton;
     [SerializeField] private float _animationDuration = 0.5f;
     [SerializeField] private Ease _animationEase = Ease.InOutQuad;
-    [SerializeField] private Text winPanelText;
-    [SerializeField] private Text losePanelText;
+    
 
     void Start()
     {
@@ -54,8 +53,7 @@ public class GameController : MonoBehaviour
         if (animate)
         {
             panel.transform.localScale = Vector3.zero;
-            panel.transform.DOScale(1, _animationDuration).SetEase(_animationEase);
-            
+            panel.transform.DOScale(1, _animationDuration).SetEase(_animationEase);      
         }
     }
 
@@ -76,6 +74,8 @@ public class GameController : MonoBehaviour
     }
     private void MainMenu()
     {
-        UIManager.ReturnToMain();
+        StartCoroutine(LoadingCanvas.Instance.LoadNewScene("MainMenuScene"));
     }
+
+    
 }

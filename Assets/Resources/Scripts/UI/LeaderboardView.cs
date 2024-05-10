@@ -120,10 +120,6 @@ public class LeaderboardView : View
 
         ShowPanel();
 
-        for (int j = 0; j < leaderboardData.Count; j++)
-        {
-            Debug.Log($" Sıralama : {j + 1}  Player Username : {leaderboardData[j].Username} ");
-        }
     }
 
 }
