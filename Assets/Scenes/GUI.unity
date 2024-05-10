@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641275, b: 0.5748171, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -5497,7 +5497,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20253c1d1d13b6d4488d0ef6991a0217, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _clips: []
+  _musicList:
+    Music:
+    - MusicName: Between The Chips
+      MusicClip: {fileID: 8300000, guid: 7e41a4642e22574489b170d1a7d2b965, type: 3}
+    - MusicName: Don't Give Up Yet
+      MusicClip: {fileID: 8300000, guid: 01dd0b6020236a9459d0bc5276b7d753, type: 3}
+    - MusicName: Read 'em Faces
+      MusicClip: {fileID: 8300000, guid: 7871388b21f6ad642b039cbcfe7f6b29, type: 3}
+    - MusicName: Royal Cowboy
+      MusicClip: {fileID: 8300000, guid: 3a0a65906dfce1d4cb902bd106726210, type: 3}
+    - MusicName: Save The Queen
+      MusicClip: {fileID: 8300000, guid: 791725029e5051e4a89bbc46aa17ed39, type: 3}
 --- !u!1 &1971769179
 GameObject:
   m_ObjectHideFlags: 0

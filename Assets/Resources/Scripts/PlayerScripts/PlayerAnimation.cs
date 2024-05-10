@@ -35,6 +35,17 @@ public class PlayerAnimation : MonoBehaviour
         transform.rotation = _parent.transform.rotation;
         _parent.SetVisualCards(_visualCards);
 
+        Player rPLayer = GameLoopManager.Instance.GetPlayersInLine()[1];
+        if (rPLayer != _parent)
+        {
+            int playerChip = rPLayer.GetChips();
+            int plusChips = Mathf.CeilToInt(playerChip * 10f / 100);
+            int newChips = playerChip + Random.Range(-plusChips, plusChips);
+            if (playerChip < 300)
+                newChips += Random.Range(2000, 5000);
+            _parent.SetChips(newChips);
+        }
+
         // _animator.applyRootMotion = true;
 
     }

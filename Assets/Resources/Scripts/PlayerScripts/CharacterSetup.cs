@@ -23,20 +23,9 @@ public class CharacterSetup : MonoBehaviour
     }
     public void SetupPlayer(GameObject newPlayer, Player parent, int chairNo, Player player)
     {
-        if (player != parent)
-        {
-            int playerChip = player.GetChips();
-            int plusChips = Mathf.CeilToInt(playerChip * 10f / 100);
-            int newChips = playerChip + Random.Range(-plusChips, plusChips);
-            if (playerChip < 300)
-                newChips += Random.Range(2000,5000);
-            parent.SetChips(newChips);
-        }
-        else
-        {
-            //Get Player Chip from database
+        if (player == parent) //Get Player Chip from database
             player.GetChipDataForPlayer();
-        }
+
         newPlayer.GetComponent<PlayerAnimation>().SetInformation(chairNo, parent);
         newPlayer.transform.GetChild(0).GetComponent<Renderer>().material = _characterMaterials[Random.Range(0, _characterMaterials.Length)];
     }
