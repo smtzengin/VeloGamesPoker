@@ -1,115 +1,120 @@
+﻿using Firebase.Extensions;
+using Resources.Scripts.Utility;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 
 public class DatabaseManager : MonoBehaviour
 {
+    public static DatabaseManager Instance => Singleton<DatabaseManager>.Instance;
 
-    public static DatabaseManager Instance;
+    private static int score;
+    private static int exp;
+    private static int level;
+    private static int chip;
 
     private Dictionary<string, int> playerData = new Dictionary<string, int>
     {
-        { "Score", 0 },
-        { "Exp", 0 },
-        { "Level", 1 },
-        { "Coin", 0 }
+        { "Score", score},
+        { "Exp", exp },
+        { "Level", level },
+        { "Chip", chip }
     };
-
-    private Dictionary<string, TextMeshProUGUI> textElements = new Dictionary<string, TextMeshProUGUI>();
 
     public event Action<string, int> OnDataChanged;
 
-    private FirebaseManager _firebaseManager;
-    private LoadingPanel _loadingPanel;
-
     #region Methods
 
-    private void Awake()
+    private async void Start()
     {
-        Instance = this;
-        _firebaseManager = FindObjectOfType<FirebaseManager>(true);
-        _loadingPanel = FindObjectOfType<LoadingPanel>(true);
-        _loadingPanel.gameObject.SetActive(true);
-
+        await SetPlayerData();
     }
 
-    private void Start()
+    //Adding a new user to the database with userId.
+    public void RegisterNewUser(string userID, string username)
     {
-        OnDataChanged += HandleDataChanged;
+        User user = new User(userID, username, 2000, 1, 0, 0);
+        string json = JsonUtility.ToJson(user);
+
+        FirebaseManager.Instance.UserReference.Child(userID).SetRawJsonValueAsync(json)
+            .ContinueWithOnMainThread(task =>
+            {
+                if (task.IsFaulted)
+                {
+                    Debug.LogError("Failed to save user data: " + task.Exception);
+                }
+                else if (task.IsCanceled)
+                {
+                    Debug.LogError("Canceled to save user data: " + task.Exception);
+                }
+                else if (task.IsCompleted)
+                {
+
+                    Debug.Log("User data saved successfully");
+                }
+            });
     }
 
-    private void HandleDataChanged(string dataType, int newValue)
-    {
-        if (textElements.ContainsKey(dataType))
-        {
-            textElements[dataType].text = newValue.ToString();
-        }
-    }
-
+    //Updating score on the database.
     public async void UpdateScore(int value)
     {
+        await SetPlayerData();
         int currentScore = playerData["Score"];
         currentScore += value;
         if (currentScore >= 0)
         {
             playerData["Score"] = currentScore;
-            _firebaseManager.ChangeUserData("Score", currentScore);
+            FirebaseManager.Instance.ChangeUserData("Score", currentScore);
             OnDataChanged?.Invoke("Score", currentScore);
         }
     }
-
-    public async void UpdateExp(int value)
+    //Updating exp on the database.
+    public async Task UpdateExp(int value)
     {
-        int currentExp = playerData["Exp"];
-        currentExp += value;
-        if (currentExp >= 0)
-        {
-            playerData["Exp"] = currentExp;
-            _firebaseManager.ChangeUserData("Exp", currentExp);
-            OnDataChanged?.Invoke("Exp", currentExp);
+        await SetPlayerData();
+        playerData["Exp"] = value;
+        FirebaseManager.Instance.ChangeUserData("Exp", value);
+        OnDataChanged?.Invoke("Exp", value);
 
-            int newLevel = currentExp / 100;
-            if (newLevel > playerData["Level"])
-            {
-                UpdateLevel(newLevel);
-            }
+        int newLevel = value / 100;
+        if (newLevel > playerData["Level"])
+        {
+            await UpdateLevel(newLevel);
         }
     }
-
-    public void UpdateLevel(int value)
+    //Updating Level on the database.
+    public async Task UpdateLevel(int value)
     {
+        await SetPlayerData();
         playerData["Level"] = value;
-        _firebaseManager.ChangeUserData("Level", value);
+        FirebaseManager.Instance.ChangeUserData("Level", value);
         OnDataChanged?.Invoke("Level", value);
     }
-
-    public async void UpdateCoin(int value)
+    //Updating Chip on the database.
+    public async Task UpdateChip(int value)
     {
-        int currentCoin = playerData["Coin"];
-        currentCoin += value;
-        if (currentCoin >= 0)
-        {
-            playerData["Coin"] = currentCoin;
-            _firebaseManager.ChangeUserData("Coin", currentCoin);
-            OnDataChanged?.Invoke("Coin", currentCoin);
-        }
+        await SetPlayerData();
+        int currentChip = playerData["Chip"];
+        currentChip += value;
+        playerData["Chip"] = currentChip;
+        FirebaseManager.Instance.ChangeUserData("Chip", currentChip);
+        OnDataChanged?.Invoke("Chip", currentChip);
     }
 
-    public void Logout()
+    public async Task SetPlayerData()
     {
-        if (_firebaseManager.auth != null)
-        {
-            _firebaseManager.Logout(_firebaseManager.auth);
-            gameObject.SetActive(false);
-            MainCanvas.instance.LoginPanel.SetActive(true);
-        }
-        else
-        {
-            Debug.Log("Auth is null!");
-        }
-    }
+        score = await FirebaseManager.Instance.GetUserIntData("Score");
+        exp = await FirebaseManager.Instance.GetUserIntData("Exp");
+        level = await FirebaseManager.Instance.GetUserIntData("Level");
+        chip = await FirebaseManager.Instance.GetUserIntData("Chip");
 
+        playerData["Score"] = score;
+        playerData["Exp"] = exp;
+        playerData["Level"] = level;
+        playerData["Chip"] = chip;
+    }
     #endregion
 }
