@@ -13,6 +13,12 @@ Firebase Auth Package
   https://file.io/mSLXO6jilKMu
 ```
 # Contributions
+| Contributions          | Link                                                                |
+| ----------------- | ------------------------------------------------------------------ |
+| Eyüp Han Kaygusuz | https://github.com/eyuphankygsz |
+| Batu Sarihan | https://github.com/bbatus |
+| Samet Zengin | https://github.com/smtzengin |
+| Akif Kahraman | https://github.com/akifpsh |
 
 # Demo Video
 | **Demo Video** | 
