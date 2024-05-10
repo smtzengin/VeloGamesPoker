@@ -48,7 +48,7 @@ Firebase Auth Package
 
 |**Settings Screen**|
 |:-------------|
-|![image](https://github.com/smtzengin/VeloGamesPoker/assets/73519045/27ec3545-2079-41b0-9255-d8fd4405d574)|
+[<img src="https://github.com/smtzengin/VeloGamesPoker/assets/73519045/fb718caa-36f4-46b7-b86e-571655c12bce" width="100%">](https://github.com/smtzengin/VeloGamesPoker/assets/73519045/7f535581-c0a3-44f4-ac82-dce199e62193")
 
 |**In-Game **|
 |:-------------|
