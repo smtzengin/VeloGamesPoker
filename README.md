@@ -14,10 +14,10 @@ Firebase Auth Package
 ```
 # Contributions
 
-# Demo
-| **Demo** | 
+# Demo Video
+| **Demo Video** | 
 | :-------- | 
-| https://youtu.be/NFL9X__OKtQ|
+[<img src="https://github.com/smtzengin/VeloGamesPoker/assets/73519045/0d511474-cf1a-45e9-8182-592fe68d403c" width="100%">](https://www.youtube.com/watch?v=NFL9X__OKtQ")
 
 # Screenshots
 | **Login Screen** | 
