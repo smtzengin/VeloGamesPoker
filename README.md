@@ -1,9 +1,28 @@
-
 # Texas Hold'em Poker
 
 This project is developed based on the Offline Texas Hold'em Poker, which is the third project provided by Velo Games. Our game features login, registration, auto-login, leaderboard, battling against bots, and gameplay adhering to all Texas Hold'em poker rules. The experience points (exp) and scores earned by the user in the game are stored on Firebase.
 
 Before starting: After downloading the project, it is necessary to install the following package before launching the game.
+
+## Opponent's Decision Formula
+| **Before Pre-Flop** | 
+| :-------- | 
+Aggression * Mathf.Log((HandCardPoint() + OnePairPoint()) / 2f, 2) * Randomness * rand / (Caution + Stupidity)
+
+| **After Pre-Flop** | 
+| :-------- | 
+Aggression * Mathf.Log((HandCardPoint() + (int)_bestHand) / 2f, 2) * Randomness * rand / (Caution + Stupidity)
+
+### Explaining Of Symbols
+|   Name   |    Describe   |
+|----------|:-------------:|
+| Aggression | Bot's Aggressiveness means how strong bot continue playing even with bad hand. |
+| Randomness | Defines how strong bot should took random actions. |
+| Caution | It determines how strong bot play cautious with bad hand. | 
+| Stupidity | It determines how strong bot can make stupid decisions. | 
+| HandCardPoint() | Calculates Bot's hand and return result. | 
+| OnePairPoint() | Checks if Bot's has One Pair and returns result 0 or One Pair points. | 
+| _bestHand | It is a field which returns Bot's best combination with it's own hand and the opened cards on the table. |
 
 ## Installation
 
@@ -13,8 +32,8 @@ Firebase Auth Package
   https://file.io/mSLXO6jilKMu
 ```
 # Contributions
-| Contributions          | Link                                                                |
-| ----------------- | ------------------------------------------------------------------ |
+| Contributions          | Link |
+| ----------------- | ------------------------------- |
 | Eyüp Han Kaygusuz | https://github.com/eyuphankygsz |
 | Batu Sarihan | https://github.com/bbatus |
 | Samet Zengin | https://github.com/smtzengin |
@@ -22,8 +41,8 @@ Firebase Auth Package
 
 # Demo Video
 | **Demo Video** | 
-| :-------- | 
-[<img src="https://github.com/smtzengin/VeloGamesPoker/assets/73519045/0d511474-cf1a-45e9-8182-592fe68d403c" width="100%">](https://www.youtube.com/watch?v=NFL9X__OKtQ")
+| :-------- |
+[![Game Video](https://github.com/smtzengin/VeloGamesPoker/assets/73519045/0d511474-cf1a-45e9-8182-592fe68d403c)](https://www.youtube.com/watch?v=NFL9X__OKtQ")
 
 # Screenshots
 | **Login Screen** | 
@@ -53,5 +72,3 @@ Firebase Auth Package
 |**In-Game **|
 |:-------------|
 |![image](https://github.com/smtzengin/VeloGamesPoker/assets/73519045/0d511474-cf1a-45e9-8182-592fe68d403c)|
-
-
