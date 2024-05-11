@@ -22,6 +22,7 @@ Aggression * Mathf.Log((HandCardPoint() + (int)_bestHand) / 2f, 2) * Randomness 
 | Stupidity | It determines how strong bot can make stupid decisions. | 
 | HandCardPoint() | Calculates Bot's hand and return result. | 
 | OnePairPoint() | Checks if Bot's has One Pair and returns result 0 or One Pair points. | 
+| rand | A random generated fraction which helps Bot to not just do the same thing again and again. | 
 | _bestHand | It is a field which returns Bot's best combination with it's own hand and the opened cards on the table. |
 
 ## Installation
